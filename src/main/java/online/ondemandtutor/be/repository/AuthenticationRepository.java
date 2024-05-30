@@ -9,4 +9,6 @@ import java.util.List;
 public interface AuthenticationRepository extends JpaRepository<Account, Long> {
     List<Account> findAccountByIsDeletedFalse();
     Account findAccountByIdAndIsDeletedFalse(long id);
+
+    Account findAccountByPhone(String phone);
 }

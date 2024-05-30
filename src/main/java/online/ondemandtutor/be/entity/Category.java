@@ -15,10 +15,10 @@ import lombok.Setter;
 public class Category {
     @Id
             @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private long id;
 
-    String subject;
-    Integer number;
+    private String subject;
+    private Integer number;
 
-    boolean isDeleted = false;
+    private boolean isDeleted = false;
 }
