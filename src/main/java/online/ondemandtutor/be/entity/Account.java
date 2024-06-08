@@ -3,10 +3,13 @@ package online.ondemandtutor.be.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import online.ondemandtutor.be.enums.RoleEnum;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,22 +20,43 @@ public class Account implements UserDetails {
             @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String phone;
-    private String password;
-
     private boolean isDeleted = false;
 
     @Column(unique = true)
-    private String email;
+    private String email; // login bang email
+
+    private String fullname;
+
+    private String password;
+
+    private String phone;
+
+    @Enumerated(EnumType.STRING)
+    RoleEnum role;
+
+    @OneToMany(mappedBy = "account")
+    List<Certificate> certificates;
+
+    @OneToMany(mappedBy = "account")
+    List<TutorVideo> tutorVideos;
+
+    @OneToMany(mappedBy = "account")
+    List<Complaint> complaints;
+
+    @OneToMany(mappedBy = "account")
+    List<Review> reviews;
+
+    @OneToMany(mappedBy = "category")
+    private List<Subject> subjects;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return List.of(new SimpleGrantedAuthority(role.toString()));
     }
 
     @Override
     public String getUsername() {
-        return this.phone;
+        return this.email;
     }
 
     @Override

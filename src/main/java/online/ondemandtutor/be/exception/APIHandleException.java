@@ -13,16 +13,26 @@ public class APIHandleException {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleInvalidUsernamePassword(BadCredentialsException ex) {
-        return new ResponseEntity<>("Phone or password not correct!!!", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>("Email or password is not correct!", HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleInvalidUsernamePassword(AuthException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<Object> handleDuplicatePhone(SQLIntegrityConstraintViolationException ex) {
-        return new ResponseEntity<>("Duplicate phone number!!!", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> duplicateSignUpEmailToDatabase(SQLIntegrityConstraintViolationException ex){
+        return new ResponseEntity<>("Email already exists!", HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<Object> handleDuplicatePhone(AuthException ex) {
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> duplicateSignUpEmailToDatabase(AuthException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
