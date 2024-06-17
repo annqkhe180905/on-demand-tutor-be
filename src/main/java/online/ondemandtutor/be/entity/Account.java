@@ -48,6 +48,9 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "account")
     List<Review> reviews;
 
+    @OneToMany(mappedBy = "account")
+    List<TutorSchedule> tutorSchedules;
+
 //    @OneToMany(mappedBy = "account")
 //    List<Subject> subjects;
 

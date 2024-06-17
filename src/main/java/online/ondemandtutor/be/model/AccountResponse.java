@@ -7,5 +7,6 @@ import online.ondemandtutor.be.entity.Account;
 @Getter
 @Setter
 public class AccountResponse extends Account {
+
     private String token;
 }
