@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Setter
@@ -15,11 +15,13 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "created_at", columnDefinition = "datetime(6)")
+    private LocalDateTime createdAt;
 
-    private Date createdAt;
-
+    @Column(nullable = false)
     private int score;
 
+    @Column
     private String content;
 
     @ManyToOne
