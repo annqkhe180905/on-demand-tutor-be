@@ -1,9 +1,9 @@
 package online.ondemandtutor.be.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import online.ondemandtutor.be.enums.RoleEnum;
+import online.ondemandtutor.be.enums.StatusEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,10 +14,12 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Account implements UserDetails {
     @Id
-            @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private boolean isDeleted = false;
@@ -32,10 +34,16 @@ public class Account implements UserDetails {
     private String phone;
 
     @Enumerated(EnumType.STRING)
+    StatusEnum requestStatus;
+
+    @Enumerated(EnumType.STRING)
     RoleEnum role;
 
+    //setAvatar cho user, up certificate và video cho tutor
+
     @OneToMany(mappedBy = "account")
-    List<Certificate> certificates;
+    List<TutorCertificate> tutorCertificates;
+
 
     @OneToMany(mappedBy = "account")
     List<TutorVideo> tutorVideos;
@@ -46,12 +54,21 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "account")
     List<Review> reviews;
 
-    @OneToMany(mappedBy = "category")
-    private List<Subject> subjects;
+
+    @OneToMany(mappedBy = "account")
+    List<TutorSchedule> tutorSchedules;
+
+    //test
+    public Account(String email, String password, String fullname,String phone, RoleEnum role, boolean isDeleted) {
+    }
+
+//    @OneToMany(mappedBy = "account")
+//    List<Subject> subjects;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.toString()));
+        System.out.println(this.role);
+        return List.of(new SimpleGrantedAuthority(this.role.toString()));
     }
 
     @Override

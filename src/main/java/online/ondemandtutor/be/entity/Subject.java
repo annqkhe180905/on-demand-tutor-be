@@ -13,17 +13,22 @@ import java.util.List;
 public class Subject {
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     @JsonIgnore
     Category category;
 
-    @OneToMany(mappedBy = "subject")
-    List<TutorSchedule> tutorSchedules;
+//    @ManyToOne
+//    @JoinColumn(name = "tutorSchedule_id")
+//    @JsonIgnore
+//    private TutorSchedule tutorSchedule;
+
+    @ManyToOne
+    @JoinColumn(name = "subjectRegister_id")
+    @JsonIgnore
+    SubjectRegister subjectRegister;
 
     private String name;
-    private int grade;
-    private boolean isDeleted = false;
 }
