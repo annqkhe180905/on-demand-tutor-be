@@ -2,7 +2,6 @@ package online.ondemandtutor.be.service;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
-import online.ondemandtutor.be.entity.Category;
 import online.ondemandtutor.be.enums.RoleEnum;
 import online.ondemandtutor.be.exception.AuthException;
 import online.ondemandtutor.be.exception.BadRequestException;
@@ -66,15 +65,18 @@ public class AuthenticationService implements UserDetailsService {
         // => account chuẩn
 
         Account account = authenticationRepository.findAccountByEmail(loginRequest.getEmail());
+        if(account.isDeleted() == true){
+            throw new BadRequestException("Please try another account!");
+        }
         String token = tokenService.generateToken(account);
 
         AccountResponse accountResponse = new AccountResponse();
         accountResponse.setEmail(account.getEmail());
         accountResponse.setToken(token);
-        accountResponse.setEmail(account.getEmail());
         accountResponse.setFullname(account.getFullname());
         accountResponse.setRole(account.getRole());
-
+        accountResponse.setId(account.getId());
+        accountResponse.setPhone((account.getPhone()));
         return accountResponse;
     }
 
@@ -92,9 +94,11 @@ public class AuthenticationService implements UserDetailsService {
             FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(loginGoogleRequest.getToken());
             String email = firebaseToken.getEmail();
             account  = authenticationRepository.findAccountByEmail(email);
-
+            if(account.isDeleted() == true){
+                throw new BadRequestException("Please try another account!");
+            }
             if(account == null){
-                 account = new Account();
+                account = new Account();
                 //fullName
                 account.setFullname(firebaseToken.getName());
                 //email
@@ -113,7 +117,7 @@ public class AuthenticationService implements UserDetailsService {
             accountResponse.setToken(token);
 
         }catch(Exception e){
-                System.out.println(e);
+            System.out.println(e);
         }
         return accountResponse;
     }
@@ -154,43 +158,5 @@ public class AuthenticationService implements UserDetailsService {
         Account account = getCurrentAccount();
         account.setPassword(passwordEncoder.encode(resetPasswordRequest.getPassword()));
         authenticationRepository.save(account);
-    }
-
-    //them vo github branch UpRole
-    public Account UpRole(UpRoleRequest upRoleRequest){
-        Account account = authenticationRepository.findAccountByEmail(upRoleRequest.getEmail());
-        if(account != null){
-            account.setRole(RoleEnum.TUTOR);
-            return authenticationRepository.save(account);
-        }
-        else{
-            throw new BadRequestException("Account is not found!");
-        }
-    }
-
-    public List<Account> getAllAccounts(){
-        return authenticationRepository.findAccountByIsDeletedFalse();
-    }
-
-
-    public Account updateAccount(AccountRequest accountRequest, long id) {
-        Account account = authenticationRepository.findAccountByIdAndIsDeletedFalse(id);
-
-        account.setPhone(accountRequest.getPhone());
-        account.setFullname(accountRequest.getFullname());
-
-        Account newAccount = authenticationRepository.save(account);
-        return newAccount;
-    }
-
-    public Account changeStatusByAdmin (long id){
-        Account account = authenticationRepository.findAccountByIdAndIsDeletedFalse(id);
-        if(account != null){
-            account.setDeleted(true);
-            return authenticationRepository.save(account);
-        }
-        else {
-            throw new BadRequestException("Account is not found!");
-        }
     }
 }

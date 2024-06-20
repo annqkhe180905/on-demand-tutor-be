@@ -20,6 +20,8 @@ public class TokenService {
     @Autowired
     AuthenticationRepository authenticationRepository;
 
+
+
     private final String SECRET_KEY = "HT4bb6d1dfbafb64a681139d1586b6f1160d18159afd57c8c79136d7490630407c";
 
     private SecretKey getSigninKey(){
@@ -32,7 +34,7 @@ public class TokenService {
                 // create object of JWT
                 Jwts.builder().
                         //subject of token
-                                subject(account.getUsername()).
+                                subject(account.getEmail()).
                         // time Create Token
                                 issuedAt(new Date(System.currentTimeMillis()))
                         // Time exprire of Token
@@ -54,8 +56,8 @@ public class TokenService {
 
     // get userName form CLAIM
     public Account extractAccount (String token){
-        String phone = extractClaim(token,Claims::getSubject);
-        return authenticationRepository.findAccountByPhone(phone);
+        String email = extractClaim(token,Claims::getSubject);
+        return authenticationRepository.findAccountByEmail(email);
     }
 
 

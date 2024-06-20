@@ -1,12 +1,11 @@
 package online.ondemandtutor.be.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,9 +15,17 @@ public class Category {
     @Id
             @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    //các cấp học 1 2 3
+    private int subjectLevel;
 
-    private String subject;
-    private Integer number;
+//    @ManyToOne
+//    @JoinColumn(name = "category_id")
+//    private Category category;
+
+    //CRUD - create, read, update, delete
+
+    @OneToMany(mappedBy = "category")
+    List<Subject> subject;
 
     private boolean isDeleted = false;
 }

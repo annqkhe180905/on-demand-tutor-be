@@ -14,30 +14,31 @@ public class CategoryService {
     @Autowired
     CategoryRepository categoryRepository;
 
+    //CRUD: read
     public List<Category> findAll() {
-        return categoryRepository.findAccountByIsDeletedFalse();
+        return categoryRepository.findCategoryByIsDeletedFalse();
     }
 
+    //CRUD: create
     public Category createCategory(CategoryRequest categoryRequest) {
         Category category = new Category();
-        category.setSubject(categoryRequest.getSubject());
-        category.setNumber(categoryRequest.getNumber());
-
+        category.setSubjectLevel(categoryRequest.getSubjectLevel());
         Category newCategory = categoryRepository.save(category);
         return newCategory;
     }
 
+    //CRUD: update
     public Category updateCategory(CategoryRequest categoryRequest, long id) {
-        Category category = categoryRepository.findAccountByIdAndIsDeletedFalse(id);
-        category.setSubject(categoryRequest.getSubject());
-        category.setNumber(categoryRequest.getNumber());
+        Category category = categoryRepository.findCategoryByIdAndIsDeletedFalse(id);
+        category.setSubjectLevel(categoryRequest.getSubjectLevel());
 
         Category newCategory = categoryRepository.save(category);
         return newCategory;
     }
 
+    //CRUD: delete
     public Category changeCategoryStatus(long id) {
-        Category category = categoryRepository.findAccountByIdAndIsDeletedFalse(id);
+        Category category = categoryRepository.findCategoryByIdAndIsDeletedFalse(id);
         if (category != null) {
             category.setDeleted(true);
             Category newStatus = categoryRepository.save(category);
