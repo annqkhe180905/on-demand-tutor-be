@@ -3,7 +3,9 @@ package online.ondemandtutor.be.api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import online.ondemandtutor.be.entity.Account;
 import online.ondemandtutor.be.model.*;
+
 import online.ondemandtutor.be.repository.AuthenticationRepository;
+
 import online.ondemandtutor.be.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ public class AuthenticationAPI {
 
     @Autowired
     AuthenticationService authenticationService;
+
 
     @Autowired
     AuthenticationRepository authenticationRepository;

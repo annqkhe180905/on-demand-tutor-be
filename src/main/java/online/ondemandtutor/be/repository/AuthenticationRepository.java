@@ -27,4 +27,5 @@ public interface AuthenticationRepository extends JpaRepository<Account, Long> {
     List<Account> findAccountByRole(RoleEnum role);
 
     List<Account> findAccountByRequestStatus(StatusEnum statusEnum);
+
 }
