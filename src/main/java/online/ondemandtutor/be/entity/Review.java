@@ -27,5 +27,10 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "account_id")
     @JsonIgnore
-    private Account account;
+    Account account;
+
+    @OneToOne
+    @JoinColumn(name = "booking_id", referencedColumnName = "id")
+    private Booking booking;
+
 }
