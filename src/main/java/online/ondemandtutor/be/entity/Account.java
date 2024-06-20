@@ -39,6 +39,7 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "account")
     List<TutorCertificate> tutorCertificates;
 
+
     @OneToMany(mappedBy = "account")
     List<TutorVideo> tutorVideos;
 
@@ -47,6 +48,7 @@ public class Account implements UserDetails {
 
     @OneToMany(mappedBy = "account")
     List<Review> reviews;
+
 
     @OneToMany(mappedBy = "account")
     List<TutorSchedule> tutorSchedules;
