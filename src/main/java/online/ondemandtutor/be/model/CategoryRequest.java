@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class CategoryRequest {
-    long id;
-    String subject;
-    Integer number;
-    boolean isDeleted;
+    private long id;
+
+    private int subjectLevel;
+    private boolean isDeleted;
 }

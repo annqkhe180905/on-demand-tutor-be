@@ -34,8 +34,11 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     RoleEnum role;
 
+    //setAvatar cho user, up certificate và video cho tutor
+
     @OneToMany(mappedBy = "account")
-    List<Certificate> certificates;
+    List<TutorCertificate> tutorCertificates;
+
 
     @OneToMany(mappedBy = "account")
     List<TutorVideo> tutorVideos;
@@ -46,12 +49,17 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "account")
     List<Review> reviews;
 
-    @OneToMany(mappedBy = "category")
-    private List<Subject> subjects;
+
+    @OneToMany(mappedBy = "account")
+    List<TutorSchedule> tutorSchedules;
+
+//    @OneToMany(mappedBy = "account")
+//    List<Subject> subjects;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.toString()));
+        System.out.println(this.role);
+        return List.of(new SimpleGrantedAuthority(this.role.toString()));
     }
 
     @Override
