@@ -2,6 +2,7 @@ package online.ondemandtutor.be.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,16 +14,32 @@ public class APIHandleException {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleInvalidUsernamePassword(BadCredentialsException ex) {
-        return new ResponseEntity<>("Phone or password not correct!!!", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>("Email or password is not correct!", HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<Object> handleDuplicatePhone(SQLIntegrityConstraintViolationException ex) {
-        return new ResponseEntity<>("Duplicate phone number!!!", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> duplicateSignUpEmailToDatabase(SQLIntegrityConstraintViolationException ex){
+        return new ResponseEntity<>("This email is already existed!", HttpStatus.BAD_REQUEST);
+    }
+
+//    @ExceptionHandler(AuthException.class)
+//    public ResponseEntity<Object> handleInvalidUsernamePasswordLogin(AuthException ex) {
+//        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+//    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(AuthException.class)
-    public ResponseEntity<Object> handleDuplicatePhone(AuthException ex) {
+    public ResponseEntity<Object> duplicateSignUpEmail(AuthException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }
