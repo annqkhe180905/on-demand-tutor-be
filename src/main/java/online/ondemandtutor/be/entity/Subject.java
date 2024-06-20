@@ -20,8 +20,10 @@ public class Subject {
     @JsonIgnore
     Category category;
 
-    @OneToMany(mappedBy = "subject")
-    List<TutorSchedule> tutorSchedules;
+    @ManyToOne
+    @JoinColumn(name = "tutorSchedule_id")
+    @JsonIgnore
+    private TutorSchedule tutorSchedule;
 
     private String name;
     // bỏ grade

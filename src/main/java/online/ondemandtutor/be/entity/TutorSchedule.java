@@ -20,14 +20,19 @@ public class TutorSchedule {
     @JsonIgnore
     Account account;
 
-    @ManyToOne
-    @JoinColumn(name = "subject_id")
-    @JsonIgnore
-    Subject subject;
+    @OneToMany(mappedBy = "tutorSchedule")
+    List<Subject> subjects;
 
     @OneToMany(mappedBy = "tutorSchedule")
     List<Booking> bookings;
 
-    String weekDay;
-    String teachingTime;
+    @ElementCollection
+    @CollectionTable(name = "tutor_schedule_weekdays", joinColumns = @JoinColumn(name = "tutor_schedule_id"))
+    @Column(name = "week_day")
+    private List<String> weekDays;
+
+    @ElementCollection
+    @CollectionTable(name = "tutor_schedule_teaching_times", joinColumns = @JoinColumn(name = "tutor_schedule_id"))
+    @Column(name = "teaching_time")
+    private List<String> teachingTimes;
 }
