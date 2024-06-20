@@ -38,14 +38,15 @@ public class Filter extends OncePerRequestFilter {
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
 
-    // list danh sach api valid
+    // list danh sach api valid khi chua login
     private final List<String> AUTH_PERMISSION = List.of(
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-resources/**",
             "/api/login",
             "/api/register",
-            "/api/account"
+            "/api/forget-password",
+            "/api/login-google"
     );
 
     private boolean isPermitted(String uri) {

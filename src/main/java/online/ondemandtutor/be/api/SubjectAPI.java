@@ -1,5 +1,6 @@
 package online.ondemandtutor.be.api;
 
+
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import online.ondemandtutor.be.entity.Subject;
 import online.ondemandtutor.be.model.SubjectRequest;
@@ -13,8 +14,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api")
-@SecurityRequirement(name = "api")
 
+@SecurityRequirement(name = "api")
 public class SubjectAPI {
     @Autowired
     SubjectService subjectService;
@@ -47,6 +48,7 @@ public class SubjectAPI {
 
     @DeleteMapping("/subject/{id}")
     @PreAuthorize("hasAuthority('TUTOR')")
+
     public ResponseEntity deleteSubject(@PathVariable long id) {
         Subject subject = subjectService.deleteSubject(id);
         return ResponseEntity.ok(subject);

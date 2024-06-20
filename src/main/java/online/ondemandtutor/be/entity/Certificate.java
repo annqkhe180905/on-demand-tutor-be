@@ -10,25 +10,23 @@ import java.util.Date;
 @Entity
 @Setter
 @Getter
-public class Review {
+public class Certificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    private String name;
 
-    private Date createdAt;
+    private String url;
 
-    private int score;
+    private Date startAt;
 
-    private String content;
+    private Date endAt;
 
+    // many cer => one account
     @ManyToOne
     @JoinColumn(name = "account_id")
     @JsonIgnore
     Account account;
-
-    @OneToOne
-    @JoinColumn(name = "booking_id", referencedColumnName = "id")
-    private Booking booking;
 
 }
