@@ -1,9 +1,7 @@
 package online.ondemandtutor.be.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -14,5 +12,10 @@ public class Grade {
     private long id;
 
     private String grade;
+
+    @ManyToOne
+    @JoinColumn(name = "subjectRegister_id")
+    @JsonIgnore
+    SubjectRegister subjectRegister;
 
 }

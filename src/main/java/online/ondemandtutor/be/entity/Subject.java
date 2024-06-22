@@ -20,14 +20,15 @@ public class Subject {
     @JsonIgnore
     Category category;
 
+//    @ManyToOne
+//    @JoinColumn(name = "tutorSchedule_id")
+//    @JsonIgnore
+//    private TutorSchedule tutorSchedule;
+
     @ManyToOne
-    @JoinColumn(name = "tutorSchedule_id")
+    @JoinColumn(name = "subjectRegister_id")
     @JsonIgnore
-    private TutorSchedule tutorSchedule;
+    SubjectRegister subjectRegister;
 
     private String name;
-    // bỏ grade
-    private boolean isDeleted = false;
-
-
 }

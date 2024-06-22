@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface EducationLevelRepository extends JpaRepository<EducationLevel, Long> {
-    EducationLevel findById(long id);
+    EducationLevel findEducationLevelById(long id);
 
     List<EducationLevel> findAll();
 

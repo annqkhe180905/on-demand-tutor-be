@@ -1,12 +1,13 @@
 package online.ondemandtutor.be.repository;
 
 import online.ondemandtutor.be.entity.Grade;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface GradeRepository {
+public interface GradeRepository extends JpaRepository<Grade, Integer> {
     List<Grade> findAll();
-    Grade findById(Long id);
+    Grade findGradeById(Long id);
 }
