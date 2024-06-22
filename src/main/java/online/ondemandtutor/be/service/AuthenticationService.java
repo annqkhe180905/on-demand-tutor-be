@@ -94,8 +94,9 @@ public class AuthenticationService implements UserDetailsService {
             FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(loginGoogleRequest.getToken());
             String email = firebaseToken.getEmail();
             account  = authenticationRepository.findAccountByEmail(email);
+
             if(account == null){
-                 account = new Account();
+                account = new Account();
                 //fullName
                 account.setFullname(firebaseToken.getName());
                 //email
@@ -118,7 +119,7 @@ public class AuthenticationService implements UserDetailsService {
             accountResponse.setToken(token);
 
         }catch(Exception e){
-                System.out.println(e);
+            System.out.println(e);
         }
         return accountResponse;
     }
