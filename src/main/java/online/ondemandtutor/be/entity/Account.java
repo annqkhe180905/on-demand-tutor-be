@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,8 +42,8 @@ public class Account implements UserDetails {
 
     //setAvatar cho user, up certificate và video cho tutor
 
-    @OneToMany(mappedBy = "account")
-    List<TutorCertificate> tutorCertificates;
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    List<TutorCertificate> tutorCertificates = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "account")
@@ -55,10 +56,18 @@ public class Account implements UserDetails {
     List<Review> reviews;
 
 
-    @OneToMany(mappedBy = "account")
-    List<TutorSchedule> tutorSchedules;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "tutor_schedule_id", referencedColumnName = "id")
+    TutorSchedule tutorSchedules;
 
-    //test
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "subject_register_id", referencedColumnName = "id")
+    SubjectRegister subjectRegister;
+
+    @OneToMany(mappedBy = "account")
+    List<ScheduleRecord> scheduleRecords;
+
+    //test case
     public Account(String email, String password, String fullname,String phone, RoleEnum role, boolean isDeleted) {
     }
 
@@ -67,8 +76,7 @@ public class Account implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        System.out.println(this.role);
-        return List.of(new SimpleGrantedAuthority(this.role.toString()));
+        return List.of(new SimpleGrantedAuthority(role.toString()));
     }
 
     @Override

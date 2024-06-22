@@ -1,5 +1,6 @@
 package online.ondemandtutor.be.service;
 
+import jakarta.transaction.Transactional;
 import online.ondemandtutor.be.entity.Account;
 import online.ondemandtutor.be.entity.TutorCertificate;
 import online.ondemandtutor.be.enums.RoleEnum;
@@ -7,9 +8,11 @@ import online.ondemandtutor.be.enums.StatusEnum;
 import online.ondemandtutor.be.exception.BadRequestException;
 import online.ondemandtutor.be.model.*;
 import online.ondemandtutor.be.repository.AuthenticationRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,12 +30,18 @@ public class AccountService {
     //  bao gom certificate URL -> gui den mail cho MOD -> APPROVED OR REJECTED
 
     // STUDENT GUI REQUEST KEM` CERTIFICATE
+
     public Account UpRole(UpRoleRequest upRoleRequest){
         Account account = authenticationService.getCurrentAccount();
-        TutorCertificate certificate = new TutorCertificate();
+
         if(account != null){
+
+            TutorCertificate certificate = new TutorCertificate();
             certificate.setUrl(upRoleRequest.getCertificateUrl());
+            certificate.setAccount(account);
+
             account.setRequestStatus(StatusEnum.PENDING);
+            account.getTutorCertificates().add(certificate);
             SendUpRoleRegistrationToModerator(account);
             return authenticationRepository.save(account);
         }
@@ -61,6 +70,7 @@ public class AccountService {
     public Account RejectedUpRole(UpRoleRequestByAccountId id){
 
         Account account = authenticationRepository.findAccountById(id.getAccountId());
+
         if(account != null){
             account.setRequestStatus(StatusEnum.REJECTED);
             SendUpRoleRequestStatusToStudent(account, "REJECTED!");
