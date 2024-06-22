@@ -94,9 +94,7 @@ public class AuthenticationService implements UserDetailsService {
             FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(loginGoogleRequest.getToken());
             String email = firebaseToken.getEmail();
             account  = authenticationRepository.findAccountByEmail(email);
-            if(account.isDeleted() == true){
-                throw new BadRequestException("Please try another account!");
-            }
+
             if(account == null){
                 account = new Account();
                 //fullName
@@ -105,6 +103,10 @@ public class AuthenticationService implements UserDetailsService {
                 account.setEmail(firebaseToken.getEmail());
                 account.setRole(RoleEnum.STUDENT);
                 account = authenticationRepository.save(account);
+            }else{
+                if(account.isDeleted() == true){
+                    throw new BadRequestException("Please try another account!");
+                }
             }
 
             accountResponse.setId(account.getId());
