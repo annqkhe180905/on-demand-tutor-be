@@ -30,9 +30,6 @@ public class SubjectRegister {
     @OneToMany(mappedBy = "subjectRegister")
     List<WeekDay> weekDayIds;
 
-    @OneToMany(mappedBy = "subjectRegister")
-    List<TeachingSlot> teachingSlotIds;
-
     @OneToOne(mappedBy = "subjectRegister")
     Account accountId;
 

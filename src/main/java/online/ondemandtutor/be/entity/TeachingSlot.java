@@ -4,17 +4,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
-public class Location {
+public class TeachingSlot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    Long id;
 
-    private String location;
+    String time;
 
     @ManyToOne
-    @JoinColumn(name = "subjectRegister_id")
+    @JoinColumn(name = "weekday_id")
     @JsonIgnore
-    private SubjectRegister subjectRegister;
+    WeekDay weekDay;
+
+    @OneToMany(mappedBy = "teachingSlot")
+    List<ScheduleRecord> scheduleRecords;
+
 }

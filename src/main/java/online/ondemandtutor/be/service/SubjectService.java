@@ -2,7 +2,6 @@ package online.ondemandtutor.be.service;
 
 import online.ondemandtutor.be.entity.*;
 import online.ondemandtutor.be.model.SubjectRegisterRequest;
-import online.ondemandtutor.be.model.SubjectRequest;
 import online.ondemandtutor.be.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,21 @@ public class SubjectService {
     private EducationLevelRepository educationLevelRepository;
     @Autowired
     private LocationRepository locationRepository;
+
+    @Autowired
+    private SubjectRegisterRepository subjectRegisterRepository;
+    @Autowired
+    private WeekDayRepository weekDayRepository;
+
+    @Autowired
+    private TeachingSlotRepository teachingSlotRepository;
+    @Autowired
+    private GradeRepository gradeRepository;
+//    @Autowired
+//    private GradeRepository gradeRepository;
+//    @Autowired
+//    private WeekDayRepository weekDayRepository;
+
 //    @Autowired
 //    private GradeRepository gradeRepository;
 //    @Autowired
@@ -99,46 +113,65 @@ public class SubjectService {
     String brief;
     * */
     //form de TUTOR dang ky mon hoc voi MODERATOR
-    public void tutorRegisterSubject(SubjectRegisterRequest request){
+
+    public SubjectRegister tutorRegisterSubject(SubjectRegisterRequest request){
         Account account = authenticationService.getCurrentAccount();
         SubjectRegister subjectRegister = new SubjectRegister();
-        EducationLevel level = educationLevelRepository.findById(request.getEducationLevelId()).get();
+        EducationLevel level = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
+
 
         ArrayList<Location> locations = new ArrayList<>();
         for(Long findId: request.getLocationIds()){
-            Location location = locationRepository.findById(findId).get();
+            Location location = locationRepository.findLocationById(findId);
             locations.add(location);
         }
 
         ArrayList<Subject> subjects = new ArrayList<>();
         for(Long findId: request.getSubjectIds()){
-            Subject subject = subjectRepository.findById(findId).get();
+            Subject subject = subjectRepository.findSubjectById(findId);
             subjects.add(subject);
         }
 
-//        ArrayList<Grade> grades = new ArrayList<>();
-//        for(Long findId: request.getGradeIds()){
-//            Grade grade = gradeRepository.findById(findId);
-//            grades.add(grade);
-//        }
+        ArrayList<Grade> grades = new ArrayList<>();
+        for(Long findId: request.getGradeIds()){
+            Grade grade = gradeRepository.findGradeById(findId);
+            grades.add(grade);
+        }
+
 
         TutorVideo tutorVideo = new TutorVideo();
         tutorVideo.setUrl(request.getTutorVideoUrl());
 
-//        ArrayList<WeekDay> weekDays = new ArrayList<>();
-//        for (Long findId: request.getWeekDayIds()){
-//            WeekDay day = weekDayRepository.findWeekDayById(findId);
-//            weekDays.add(day);
-//        }
+        // Handle WeekDays
+        ArrayList<WeekDay> weekDays = new ArrayList<>();
+        for (Long findId : request.getWeekDayIds()) {
+            WeekDay day = weekDayRepository.findWeekDayById(findId);
+            day.setSubjectRegister(subjectRegister); // Link the WeekDay to SubjectRegister
+            weekDays.add(day);
+        }
 
-//        ArrayList<TeachingSlot> teachingSlots = new ArrayList<>();
-//        for (Long findId: request.getTeachingSlotIds()){
-//            TeachingSlot
-//        }
+        // Handle TeachingSlots
+        ArrayList<TeachingSlot> teachingSlots = new ArrayList<>();
+        for (Long findId : request.getTeachingSlotIds()) {
+            TeachingSlot slot = teachingSlotRepository.findTeachingSlotById(findId);
+            WeekDay weekDay = slot.getWeekDay(); // Assume TeachingSlot already has a WeekDay
+            if (weekDay != null && weekDay.getSubjectRegister() == null) {
+                weekDay.setSubjectRegister(subjectRegister); // Link the WeekDay to SubjectRegister if not already linked
+                weekDays.add(weekDay);
+            }
+            teachingSlots.add(slot);
+        }
 
-        String brief = request.getBrief();
+        subjectRegister.setEducationLevelId(level);
+        subjectRegister.setLocationIds(locations);
+        subjectRegister.setSubjectIds(subjects);
+        subjectRegister.setTutorVideoUrl(tutorVideo);
+        subjectRegister.setWeekDayIds(weekDays);
+        subjectRegister.setGradeIds((grades));
+        subjectRegister.setAccountId(account);
+        subjectRegister.setBrief(request.getBrief());
 
-
+        return subjectRegisterRepository.save(subjectRegister);
 
     }
 

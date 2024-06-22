@@ -1,9 +1,6 @@
 package online.ondemandtutor.be.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -14,4 +11,8 @@ public class EducationLevel {
     private long id;
 
     private String educationLevel;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "subject_register_id", referencedColumnName = "id")
+    SubjectRegister subjectRegister;
 }

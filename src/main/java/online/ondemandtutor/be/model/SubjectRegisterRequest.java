@@ -1,7 +1,6 @@
 package online.ondemandtutor.be.model;
 
 import lombok.Data;
-import online.ondemandtutor.be.entity.Subject;
 
 import java.util.List;
 
@@ -12,5 +11,8 @@ public class SubjectRegisterRequest {
     List<Long> subjectIds;
     List<Long> gradeIds;
     String TutorVideoUrl;
+    List<Long> weekDayIds;
+    List<Long> teachingSlotIds;
+    Long accountId;
     String brief;
 }
