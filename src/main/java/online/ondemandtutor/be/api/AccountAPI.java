@@ -22,8 +22,8 @@ public class AccountAPI {
     AccountService accountService;
 
     @PostMapping("/up-role")
-    public void upRole(@RequestBody UpRoleRequest request){
-        accountService.UpRole(request);
+    public ResponseEntity upRole(@RequestBody UpRoleRequest request){
+        return ResponseEntity.ok(accountService.UpRole(request));
     }
 
     @PostMapping("/approved-up-role")
