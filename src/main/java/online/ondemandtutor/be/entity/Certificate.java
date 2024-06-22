@@ -5,32 +5,28 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Setter
 @Getter
-public class Review {
+public class Certificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "created_at", columnDefinition = "datetime(6)")
-    private LocalDateTime createdAt;
+    private String name;
 
-    @Column(nullable = false)
-    private int score;
+    private String url;
 
-    @Column
-    private String content;
+    private Date startAt;
 
+    private Date endAt;
+
+    // many cer => one account
     @ManyToOne
     @JoinColumn(name = "account_id")
     @JsonIgnore
     Account account;
-
-    @OneToOne
-    @JoinColumn(name = "booking_id", referencedColumnName = "id")
-    private Booking booking;
 
 }

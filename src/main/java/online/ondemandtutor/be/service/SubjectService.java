@@ -24,6 +24,7 @@ public class SubjectService {
     private EducationLevelRepository educationLevelRepository;
     @Autowired
     private LocationRepository locationRepository;
+
     @Autowired
     private SubjectRegisterRepository subjectRegisterRepository;
     @Autowired
@@ -37,6 +38,7 @@ public class SubjectService {
 //    private GradeRepository gradeRepository;
 //    @Autowired
 //    private WeekDayRepository weekDayRepository;
+
 //    @Autowired
 //    private GradeRepository gradeRepository;
 //    @Autowired
@@ -111,10 +113,12 @@ public class SubjectService {
     String brief;
     * */
     //form de TUTOR dang ky mon hoc voi MODERATOR
+
     public SubjectRegister tutorRegisterSubject(SubjectRegisterRequest request){
         Account account = authenticationService.getCurrentAccount();
         SubjectRegister subjectRegister = new SubjectRegister();
         EducationLevel level = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
+
 
         ArrayList<Location> locations = new ArrayList<>();
         for(Long findId: request.getLocationIds()){
@@ -134,9 +138,9 @@ public class SubjectService {
             grades.add(grade);
         }
 
+
         TutorVideo tutorVideo = new TutorVideo();
         tutorVideo.setUrl(request.getTutorVideoUrl());
-
 
         // Handle WeekDays
         ArrayList<WeekDay> weekDays = new ArrayList<>();
@@ -168,6 +172,7 @@ public class SubjectService {
         subjectRegister.setBrief(request.getBrief());
 
         return subjectRegisterRepository.save(subjectRegister);
+
     }
 
 }

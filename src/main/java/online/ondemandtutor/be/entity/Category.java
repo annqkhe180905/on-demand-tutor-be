@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Category {
     @Id
-            @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     //các cấp học 1 2 3
     private int subjectLevel;

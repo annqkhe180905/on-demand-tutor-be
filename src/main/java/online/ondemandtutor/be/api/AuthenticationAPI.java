@@ -9,10 +9,8 @@ import online.ondemandtutor.be.repository.AuthenticationRepository;
 import online.ondemandtutor.be.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("api")
@@ -21,10 +19,6 @@ public class AuthenticationAPI {
 
     @Autowired
     AuthenticationService authenticationService;
-
-
-    @Autowired
-    AuthenticationRepository authenticationRepository;
 
     @PostMapping("register")
     public ResponseEntity register(@RequestBody RegisterRequest registerRequest){

@@ -1,5 +1,6 @@
 package online.ondemandtutor.be.api;
 
+
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import online.ondemandtutor.be.entity.Subject;
 import online.ondemandtutor.be.entity.SubjectRegister;
@@ -15,8 +16,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api")
-@SecurityRequirement(name = "api")
 
+@SecurityRequirement(name = "api")
 public class SubjectAPI {
     @Autowired
     SubjectService subjectService;
@@ -58,5 +59,6 @@ public class SubjectAPI {
     public ResponseEntity registerForTutor(@RequestBody SubjectRegisterRequest request) {
         SubjectRegister subjectRegister = subjectService.tutorRegisterSubject(request);
         return ResponseEntity.ok(subjectRegister);
+
     }
 }
