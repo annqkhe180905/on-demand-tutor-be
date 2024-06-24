@@ -14,10 +14,8 @@
 //import online.ondemandtutor.be.service.AuthenticationService;
 //import online.ondemandtutor.be.service.TokenService;
 //import online.ondemandtutor.be.validation.LoginValidation;
-//import org.junit.Before;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
-//import org.junit.runner.RunWith;
 //import org.mockito.InjectMocks;
 //import org.mockito.Mock;
 //import org.mockito.Mockito;
@@ -307,47 +305,47 @@
 //    }
 //
 //    @Test
-//    public void testLogin_ValidEmail() {
-//        String validEmail = "annqk@fpt.edu.vn";
-//        //assertFalse kiem tra dieu kien co thoa man hay khong
-//        //boi vi Validation kiem tra xem email co thoa man hay khong
-//        // neu Validation dua ra cac truong hop sai
-//        // o day ta phai dung assertTrue de check xem Validation co tra ve false hay khong
-//        assertTrue(loginValidation.isValidUsername(validEmail));
-//
-//        LoginRequest loginRequest = new LoginRequest(validEmail, "password");
-//        Account mockAccount = Account.builder()
-//                .email("annqk@fpt.edu.vn")
-//                .password("password")
-//                .fullname("Nguyen Quang Khanh An")
-//                .role(RoleEnum.STUDENT)
-//                .phone("1234567890")
-//                .isDeleted(false)
-//                .build();
-//
-////        Account mockAccount = new Account("tet@yahoo.com", "password", "Nguyen Quang Khanh An", "1234567890", RoleEnum.STUDENT, false);
-////        System.out.println(mockAccount.getEmail());
-//
-//        when(authenticationRepository.findAccountByEmail(loginRequest.getEmail())).thenReturn(mockAccount);
-//        when(tokenService.generateToken(mockAccount)).thenReturn("mocked_token");
-//
-//        AccountResponse response = authenticationService.login(loginRequest);
-//
-//        assertNotNull(response);
-//        assertEquals(mockAccount.getEmail(), response.getEmail());
-//        assertEquals("mocked_token", response.getToken());
-//        assertEquals(mockAccount.getFullname(), response.getFullname());
-//        assertEquals(mockAccount.getRole(), response.getRole());
-//        assertEquals(mockAccount.getId(), response.getId());
-//        assertEquals(mockAccount.getPhone(), response.getPhone());
-//
-//        verify(authenticationManager).authenticate(new UsernamePasswordAuthenticationToken(
-//                loginRequest.getEmail(),
-//                loginRequest.getPassword()
-//        ));
-//        verify(authenticationRepository).findAccountByEmail(loginRequest.getEmail());
-//        verify(tokenService).generateToken(mockAccount);
-//    }
+////    public void testLogin_ValidEmail() {
+////        String validEmail = "annqk@fpt.edu.vn";
+////        //assertFalse kiem tra dieu kien co thoa man hay khong
+////        //boi vi Validation kiem tra xem email co thoa man hay khong
+////        // neu Validation dua ra cac truong hop sai
+////        // o day ta phai dung assertTrue de check xem Validation co tra ve false hay khong
+////        assertTrue(loginValidation.isValidUsername(validEmail));
+////
+////        LoginRequest loginRequest = new LoginRequest(validEmail, "password");
+////        Account mockAccount = Account.builder()
+////                .email("annqk@fpt.edu.vn")
+////                .password("password")
+////                .fullname("Nguyen Quang Khanh An")
+////                .role(RoleEnum.STUDENT)
+////                .phone("1234567890")
+////                .isDeleted(false)
+////                .build();
+////
+//////        Account mockAccount = new Account("tet@yahoo.com", "password", "Nguyen Quang Khanh An", "1234567890", RoleEnum.STUDENT, false);
+//////        System.out.println(mockAccount.getEmail());
+////
+////        when(authenticationRepository.findAccountByEmail(loginRequest.getEmail())).thenReturn(mockAccount);
+////        when(tokenService.generateToken(mockAccount)).thenReturn("mocked_token");
+////
+////        AccountResponse response = authenticationService.login(loginRequest);
+////
+////        assertNotNull(response);
+////        assertEquals(mockAccount.getEmail(), response.getEmail());
+////        assertEquals("mocked_token", response.getToken());
+////        assertEquals(mockAccount.getFullname(), response.getFullname());
+////        assertEquals(mockAccount.getRole(), response.getRole());
+////        assertEquals(mockAccount.getId(), response.getId());
+////        assertEquals(mockAccount.getPhone(), response.getPhone());
+////
+////        verify(authenticationManager).authenticate(new UsernamePasswordAuthenticationToken(
+////                loginRequest.getEmail(),
+////                loginRequest.getPassword()
+////        ));
+////        verify(authenticationRepository).findAccountByEmail(loginRequest.getEmail());
+////        verify(tokenService).generateToken(mockAccount);
+////    }
 //
 //    @Test
 //    public void testLogin_InvalidPassword() {
@@ -366,40 +364,40 @@
 ////        verifyNoInteractions(tokenService);
 //    }
 //
-//    @Test
-//    public void testLogin_ValidPassword() {
-//        String validPassword = "String123!";
-//
-//        assertTrue(loginValidation.isValidPassword(validPassword));
-//
-//        LoginRequest loginRequest = new LoginRequest("annqkhe180905@fpt.edu.vn", validPassword);
-//        Account mockAccount = Account.builder()
-//                .email("annqkhe180905@fpt.edu.vn")
-//                .password("String123!")
-//                .fullname("Nguyen Quang Khanh An")
-//                .role(RoleEnum.STUDENT)
-//                .phone("1234567890")
-//                .isDeleted(false)
-//                .build();
-//
-//        when(authenticationRepository.findAccountByEmail(loginRequest.getEmail())).thenReturn(mockAccount);
-//        when(tokenService.generateToken(mockAccount)).thenReturn("mocked_token");
-//
-//        AccountResponse response = authenticationService.login(loginRequest);
-//
-//        assertNotNull(response);
-//        assertEquals(mockAccount.getEmail(), response.getEmail());
-//        assertEquals("mocked_token", response.getToken());
-//        assertEquals(mockAccount.getFullname(), response.getFullname());
-//        assertEquals(mockAccount.getRole(), response.getRole());
-//        assertEquals(mockAccount.getId(), response.getId());
-//        assertEquals(mockAccount.getPhone(), response.getPhone());
-//
-//        verify(authenticationManager).authenticate(new UsernamePasswordAuthenticationToken(
-//                loginRequest.getEmail(),
-//                loginRequest.getPassword()
-//        ));
-//        verify(authenticationRepository).findAccountByEmail(loginRequest.getEmail());
-//        verify(tokenService).generateToken(mockAccount);
-//    }
+////    @Test
+////    public void testLogin_ValidPassword() {
+////        String validPassword = "String123!";
+////
+////        assertTrue(loginValidation.isValidPassword(validPassword));
+////
+////        LoginRequest loginRequest = new LoginRequest("annqkhe180905@fpt.edu.vn", validPassword);
+////        Account mockAccount = Account.builder()
+////                .email("annqkhe180905@fpt.edu.vn")
+////                .password("String123!")
+////                .fullname("Nguyen Quang Khanh An")
+////                .role(RoleEnum.STUDENT)
+////                .phone("1234567890")
+////                .isDeleted(false)
+////                .build();
+////
+////        when(authenticationRepository.findAccountByEmail(loginRequest.getEmail())).thenReturn(mockAccount);
+////        when(tokenService.generateToken(mockAccount)).thenReturn("mocked_token");
+////
+////        AccountResponse response = authenticationService.login(loginRequest);
+////
+////        assertNotNull(response);
+////        assertEquals(mockAccount.getEmail(), response.getEmail());
+////        assertEquals("mocked_token", response.getToken());
+////        assertEquals(mockAccount.getFullname(), response.getFullname());
+////        assertEquals(mockAccount.getRole(), response.getRole());
+////        assertEquals(mockAccount.getId(), response.getId());
+////        assertEquals(mockAccount.getPhone(), response.getPhone());
+////
+////        verify(authenticationManager).authenticate(new UsernamePasswordAuthenticationToken(
+////                loginRequest.getEmail(),
+////                loginRequest.getPassword()
+////        ));
+////        verify(authenticationRepository).findAccountByEmail(loginRequest.getEmail());
+////        verify(tokenService).generateToken(mockAccount);
+////    }
 //}

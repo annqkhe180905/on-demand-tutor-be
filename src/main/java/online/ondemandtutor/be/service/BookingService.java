@@ -11,7 +11,9 @@ import java.util.Optional;
 
 @Service
 public class BookingService {
-    private final BookingRepository bookingRepository;
+
+    @Autowired
+    BookingRepository bookingRepository;
 
     @Autowired
     public BookingService(BookingRepository bookingRepository) {
@@ -30,11 +32,11 @@ public class BookingService {
     }
 
     public Optional<Booking> getBookingById(Long id) {
-        return bookingRepository.findById(String.valueOf(id));
+        return bookingRepository.findById(Long.valueOf(String.valueOf(id)));
     }
 
     public Booking updateBooking(Long id, BookingRequest bookingRequest) {
-        Optional<Booking> optionalBooking = bookingRepository.findById(String.valueOf(id));
+        Optional<Booking> optionalBooking = bookingRepository.findById(Long.valueOf(String.valueOf(id)));
         if (optionalBooking.isPresent()) {
             Booking booking = optionalBooking.get();
             booking.setLiteracy(bookingRequest.getLiteracy());
@@ -49,6 +51,6 @@ public class BookingService {
     }
 
     public void deleteBooking(Long id) {
-        bookingRepository.deleteById(String.valueOf(id));
+        bookingRepository.deleteById(Long.valueOf(String.valueOf(id)));
     }
 }
