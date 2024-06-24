@@ -15,9 +15,11 @@ public class BookingRequest {
         Booking booking = new Booking();
         booking.setLiteracy(this.literacy);
         booking.setDesiredTutoringLocation(this.desiredTutoringLocation);
-        booking.setTutoringClass(this.classTaught);  // Đảm bảo các tên thuộc tính khớp với Booking
+        booking.setTutoringClass(this.classTaught);
         booking.setSubjectTaught(this.subjectTaught);
         booking.setBrief(this.brief);
+        // set status của booking = ok
+        booking.setStatus("OK");
         return booking;
     }
 }

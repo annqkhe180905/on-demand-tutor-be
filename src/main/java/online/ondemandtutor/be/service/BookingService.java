@@ -11,30 +11,31 @@ import java.util.Optional;
 
 @Service
 public class BookingService {
-    private final BookingRepository bookingRepository;
 
     @Autowired
-    public BookingService(BookingRepository bookingRepository) {
-        this.bookingRepository = bookingRepository;
-    }
+    BookingRepository bookingRepository;
 
+    // tạo mới booking dựa trên booking request
     public Booking createBooking(BookingRequest bookingRequest) {
         Booking booking = bookingRequest.toBooking();
-
-
+        // status booking = ok
+        booking.setStatus("OK");
         return bookingRepository.save(booking);
     }
 
+    // lấy ds tất cả booking
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
 
+    // tìm 1 booking theo id
     public Optional<Booking> getBookingById(Long id) {
-        return bookingRepository.findById(String.valueOf(id));
+        return bookingRepository.findById(id);
     }
 
+    // update booking dựa trên booking request và id
     public Booking updateBooking(Long id, BookingRequest bookingRequest) {
-        Optional<Booking> optionalBooking = bookingRepository.findById(String.valueOf(id));
+        Optional<Booking> optionalBooking = bookingRepository.findById(id);
         if (optionalBooking.isPresent()) {
             Booking booking = optionalBooking.get();
             booking.setLiteracy(bookingRequest.getLiteracy());
@@ -42,13 +43,20 @@ public class BookingService {
             booking.setTutoringClass(bookingRequest.getClassTaught());
             booking.setSubjectTaught(bookingRequest.getSubjectTaught());
             booking.setBrief(bookingRequest.getBrief());
+            // Đảm bảo trạng thái của booking vẫn là OK
+            booking.setStatus("OK");
             return bookingRepository.save(booking);
         } else {
             throw new RuntimeException("Booking not found with id " + id);
         }
     }
 
+    // xóa booking
     public void deleteBooking(Long id) {
-        bookingRepository.deleteById(String.valueOf(id));
+        if (bookingRepository.existsById(id)) {
+            bookingRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Booking not found with id " + id);
+        }
     }
 }

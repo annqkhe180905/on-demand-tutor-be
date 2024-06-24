@@ -11,7 +11,6 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-
     private String bookingDetails;
 
     @OneToOne(mappedBy = "booking")
@@ -25,16 +24,6 @@ public class Booking {
     @JsonIgnore
     private TutorSchedule tutorSchedule;
 
-    @OneToOne
-    @JoinColumn(name = "review_id")
-    @JsonIgnore
-    private Review review;
-
-    @OneToOne
-    @JoinColumn(name = "complaint_id")
-    @JsonIgnore
-    private Complaint complaint;
-
     private String literacy;
     private String desiredTutoringLocation;
     private String tutoringClass;
@@ -45,4 +34,7 @@ public class Booking {
     private int money;
     private String location;
     // private String url;
+
+    // thêm status để lưu trạng thái của booking
+    private String status;
 }
