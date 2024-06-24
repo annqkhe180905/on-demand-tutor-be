@@ -19,15 +19,23 @@ public class WeekDay {
     @JsonIgnore
     TutorSchedule tutorSchedule;
 
-    @OneToMany(mappedBy = "weekDay")
-    List<TeachingSlot> teachingSlots;
+//    @OneToMany(mappedBy = "weekDay")
+//    List<TeachingSlot> teachingSlots;
 
     @OneToMany(mappedBy = "weekDay")
     List<ScheduleRecord> scheduleRecords;
 
-    @ManyToOne
-    @JoinColumn(name = "subjectRegister_id")
+    @ManyToMany
+    @JoinTable
+            (
+                    joinColumns = @JoinColumn(name = "week_day_id"),
+                    inverseJoinColumns = @JoinColumn(name = "account_id")
+            )
     @JsonIgnore
-    SubjectRegister subjectRegister;
+    List<Account> account;
+
+    @ManyToMany(mappedBy = "weekDay")
+    List<TeachingSlot> teachingSlots;
+
 
 }

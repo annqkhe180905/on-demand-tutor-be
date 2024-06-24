@@ -15,12 +15,21 @@ public class TeachingSlot {
 
     String time;
 
-    @ManyToOne
-    @JoinColumn(name = "weekday_id")
-    @JsonIgnore
-    WeekDay weekDay;
+//    @ManyToOne
+//    @JoinColumn(name = "weekday_id")
+//    @JsonIgnore
+//    WeekDay weekDay;
 
     @OneToMany(mappedBy = "teachingSlot")
     List<ScheduleRecord> scheduleRecords;
+
+    @ManyToMany
+    @JoinTable
+            (
+                    joinColumns = @JoinColumn(name = "teaching_slot_id"),
+                    inverseJoinColumns = @JoinColumn(name = "weekDays")
+            )
+    @JsonIgnore
+    List<WeekDay> weekDay;
 
 }

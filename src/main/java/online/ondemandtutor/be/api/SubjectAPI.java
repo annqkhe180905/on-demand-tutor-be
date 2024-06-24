@@ -3,8 +3,8 @@ package online.ondemandtutor.be.api;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import online.ondemandtutor.be.entity.Subject;
-import online.ondemandtutor.be.entity.SubjectRegister;
 import online.ondemandtutor.be.model.SubjectRegisterRequest;
+import online.ondemandtutor.be.model.UpRoleRequestByAccountId;
 import online.ondemandtutor.be.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -56,9 +56,19 @@ public class SubjectAPI {
 //    }
 
     @PostMapping("/subject/register-for-tutor")
-    public ResponseEntity registerForTutor(@RequestBody SubjectRegisterRequest request) {
-        SubjectRegister subjectRegister = subjectService.tutorRegisterSubject(request);
-        return ResponseEntity.ok(subjectRegister);
-
+    public void registerForTutor(@RequestBody SubjectRegisterRequest request) {
+         subjectService.SubjectRegister(request);
     }
+
+    @PostMapping("/approved-subject-registration")
+    @PreAuthorize("hasAuthority('MODERATOR')")
+    public void approvedSubjectRegistration(@RequestBody UpRoleRequestByAccountId id){
+        subjectService.ApprovedSubject(id);
+    }
+
+    @PostMapping("/rejected-subject-registration")
+    @PreAuthorize("hasAuthority('MODERATOR')")
+    public void rejectedSubjectRegistration(@RequestBody UpRoleRequestByAccountId id){
+        subjectService.RejectedSubject(id);
+
 }
