@@ -1,8 +1,8 @@
 package online.ondemandtutor.be.service;
 
 import online.ondemandtutor.be.entity.*;
+import online.ondemandtutor.be.enums.RequestStatus;
 import online.ondemandtutor.be.enums.RoleEnum;
-import online.ondemandtutor.be.enums.StatusEnum;
 import online.ondemandtutor.be.exception.BadRequestException;
 import online.ondemandtutor.be.model.DayAndSlotRequest;
 import online.ondemandtutor.be.model.EmailDetail;
@@ -175,7 +175,7 @@ public class SubjectService {
             }
 
         }
-
+        account.setSubjectRegistrationStatus(RequestStatus.PENDING);
         SendUpRoleRegistrationToModerator(account);
     }
 
@@ -206,6 +206,7 @@ public class SubjectService {
         Account account = authenticationRepository.findAccountById(id.getAccountId());
 
         if(account != null){
+            account.setSubjectRegistrationStatus(RequestStatus.APPROVED);
             SendEmailToTutor(account, "APPROVED!");
             return authenticationRepository.save(account);
         }
@@ -220,6 +221,7 @@ public class SubjectService {
         Account account = authenticationRepository.findAccountById(id.getAccountId());
 
         if(account != null){
+            account.setSubjectRegistrationStatus(RequestStatus.REJECTED);
             SendEmailToTutor(account, "REJECTED!");
             return authenticationRepository.save(account);
         }
@@ -248,6 +250,14 @@ public class SubjectService {
         };
         new Thread(r).start();
 
+    }
+
+    public List<Account> getAllAccountsHaveSubjectRegistrationRequest(){
+        return authenticationRepository.findAccountsBySubjectRegistrationStatus(RequestStatus.PENDING);
+    }
+
+    public List<Account> getAllAccountsHaveApprovedSubjectRegistrationRequest(){
+        return authenticationRepository.findAccountsBySubjectRegistrationStatus(RequestStatus.APPROVED);
     }
 
 }

@@ -2,6 +2,7 @@ package online.ondemandtutor.be.api;
 
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import online.ondemandtutor.be.entity.Account;
 import online.ondemandtutor.be.entity.Subject;
 import online.ondemandtutor.be.model.SubjectRegisterRequest;
 import online.ondemandtutor.be.model.UpRoleRequestByAccountId;
@@ -68,7 +69,21 @@ public class SubjectAPI {
 
     @PostMapping("/rejected-subject-registration")
     @PreAuthorize("hasAuthority('MODERATOR')")
-    public void rejectedSubjectRegistration(@RequestBody UpRoleRequestByAccountId id){
+    public void rejectedSubjectRegistration(@RequestBody UpRoleRequestByAccountId id) {
         subjectService.RejectedSubject(id);
+    }
 
+    @GetMapping("/approved-registration")
+    @PreAuthorize("hasAuthority('MODERATOR')")
+    public ResponseEntity<List<Account>> getApprovedAccount (){
+        List<Account> printAll = subjectService.getAllAccountsHaveSubjectRegistrationRequest();
+        return ResponseEntity.ok(printAll);
+    }
+
+    @GetMapping("/rejected-registration")
+    @PreAuthorize("hasAuthority('MODERATOR')")
+    public ResponseEntity<List<Account>> getRejectedAccount (){
+        List<Account> printAll = subjectService.getAllAccountsHaveApprovedSubjectRegistrationRequest();
+        return ResponseEntity.ok(printAll);
+    }
 }

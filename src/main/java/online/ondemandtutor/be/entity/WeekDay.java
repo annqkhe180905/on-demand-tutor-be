@@ -14,10 +14,10 @@ public class WeekDay {
     Long id;
     String day;
 
-    @ManyToOne
-    @JoinColumn(name = "tutorSchedule_id")
-    @JsonIgnore
-    TutorSchedule tutorSchedule;
+//    @ManyToOne
+//    @JoinColumn(name = "tutorSchedule_id")
+//    @JsonIgnore
+//    TutorSchedule tutorSchedule;
 
 //    @OneToMany(mappedBy = "weekDay")
 //    List<TeachingSlot> teachingSlots;

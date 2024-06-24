@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import online.ondemandtutor.be.enums.RequestStatus;
 import online.ondemandtutor.be.enums.RoleEnum;
 import online.ondemandtutor.be.enums.StatusEnum;
 import org.springframework.security.core.GrantedAuthority;
@@ -43,6 +44,9 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     RoleEnum role;
 
+    @Enumerated(EnumType.STRING)
+    RequestStatus subjectRegistrationStatus;
+
     //setAvatar cho user, up certificate và video cho tutor
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -52,16 +56,16 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "account")
     List<TutorVideo> tutorVideos;
 
-    @OneToMany(mappedBy = "account")
-    List<Complaint> complaints;
-
-    @OneToMany(mappedBy = "account")
-    List<Review> reviews;
-
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tutor_schedule_id", referencedColumnName = "id")
-    TutorSchedule tutorSchedules;
+//    @OneToMany(mappedBy = "account")
+//    List<Complaint> complaints;
+//
+//    @OneToMany(mappedBy = "account")
+//    List<Review> reviews;
+//
+//
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "tutor_schedule_id", referencedColumnName = "id")
+//    TutorSchedule tutorSchedules;
 
     @ManyToMany(mappedBy = "account",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
             @JsonBackReference
