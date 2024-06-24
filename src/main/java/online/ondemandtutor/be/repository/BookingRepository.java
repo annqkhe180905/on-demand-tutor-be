@@ -1,7 +1,10 @@
 package online.ondemandtutor.be.repository;
 
 import online.ondemandtutor.be.entity.Booking;
-import org.hibernate.type.descriptor.converter.spi.JpaAttributeConverter;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface BookingRepository extends JpaAttributeConverter<Booking, Long> {
+@Repository
+public interface BookingRepository extends JpaRepository<Booking, Long> {
+
 }
