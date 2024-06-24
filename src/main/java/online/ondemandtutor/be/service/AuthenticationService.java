@@ -153,7 +153,8 @@ public class AuthenticationService implements UserDetailsService {
 
 
     public Account getCurrentAccount() {
-        return (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account accountFilter = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return authenticationRepository.findAccountById(accountFilter.getId());
     }
 
     public void ResetPassword(ResetPasswordRequest resetPasswordRequest) {

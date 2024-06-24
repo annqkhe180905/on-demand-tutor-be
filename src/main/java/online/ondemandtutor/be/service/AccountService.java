@@ -102,7 +102,6 @@ public class AccountService {
             };
             new Thread(r).start();
         }
-
     }
     // he thong gui mail thong bao status Up Role Request cho STUDENT sau khi MOD thao tac
     public void SendUpRoleRequestStatusToStudent(Account account, String msg){
