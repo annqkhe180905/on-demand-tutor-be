@@ -1,6 +1,7 @@
 package online.ondemandtutor.be.api;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import online.ondemandtutor.be.entity.Booking;
 import online.ondemandtutor.be.model.BookingRequest;
 import online.ondemandtutor.be.service.BookingService;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
+@SecurityRequirement(name = "api")
 public class BookingAPI {
 
     private final BookingService bookingService;

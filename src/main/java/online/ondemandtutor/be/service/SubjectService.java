@@ -1,7 +1,13 @@
 package online.ondemandtutor.be.service;
 
 import online.ondemandtutor.be.entity.*;
+import online.ondemandtutor.be.enums.RoleEnum;
+import online.ondemandtutor.be.enums.StatusEnum;
+import online.ondemandtutor.be.exception.BadRequestException;
+import online.ondemandtutor.be.model.DayAndSlotRequest;
+import online.ondemandtutor.be.model.EmailDetail;
 import online.ondemandtutor.be.model.SubjectRegisterRequest;
+import online.ondemandtutor.be.model.UpRoleRequestByAccountId;
 import online.ondemandtutor.be.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,23 +31,18 @@ public class SubjectService {
     @Autowired
     private LocationRepository locationRepository;
     @Autowired
-    private SubjectRegisterRepository subjectRegisterRepository;
-    @Autowired
     private WeekDayRepository weekDayRepository;
 
     @Autowired
     private TeachingSlotRepository teachingSlotRepository;
     @Autowired
     private GradeRepository gradeRepository;
-//    @Autowired
-//    private GradeRepository gradeRepository;
-//    @Autowired
-//    private WeekDayRepository weekDayRepository;
-//    @Autowired
-//    private GradeRepository gradeRepository;
-//    @Autowired
-//    private WeekDayRepository weekDayRepository;
-
+    @Autowired
+    private AuthenticationRepository authenticationRepository;
+    @Autowired
+    private ScheduleRecordRepository scheduleRecordRepository;
+    @Autowired
+    private EmailService emailService;
 
     //CRUD: read all
     public List<Subject> findAll() {
@@ -99,75 +100,149 @@ public class SubjectService {
 //        }
 //    }
 
-    /*
-    * Long educationLevelId;        tick
-    List<Long> locationIds;         tick
-    List<Long> subjectIds;          tick
-    List<Long> gradeIds;            tick
-    String TutorVideoUrl;           tick
-    List<Long> weekDayIds;
-    List<Long> teachingSlotIds;
-    Long accountId;                 tick
-    String brief;
-    * */
-    //form de TUTOR dang ky mon hoc voi MODERATOR
-    public SubjectRegister tutorRegisterSubject(SubjectRegisterRequest request){
-        Account account = authenticationService.getCurrentAccount();
-        SubjectRegister subjectRegister = new SubjectRegister();
-        EducationLevel level = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
 
-        ArrayList<Location> locations = new ArrayList<>();
-        for(Long findId: request.getLocationIds()){
+    public void SubjectRegister(SubjectRegisterRequest request) {
+        EducationLevel eduLv = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
+        Account account = authenticationRepository.findAccountById(request.getAccountId());
+        account.setEducationLevel(eduLv);
+        authenticationRepository.save(account);
+
+//        List<Location> locations = locationRepository.findAllById(request.getLocationIds());
+//        account.setLocations(locations);
+
+
+        ArrayList<Location> locationList = new ArrayList<>();
+        List<Account> accounts = new ArrayList<>();
+        for(Long findId : request.getLocationIds()){
             Location location = locationRepository.findLocationById(findId);
-            locations.add(location);
+            locationList.add(location);
+            accounts = location.getAccount();
+            accounts.add(account);
+            location.setAccount(accounts);
         }
+        account.setLocations(locationList);
+        authenticationRepository.save(account);
 
-        ArrayList<Subject> subjects = new ArrayList<>();
-        for(Long findId: request.getSubjectIds()){
-            Subject subject = subjectRepository.findSubjectById(findId);
-            subjects.add(subject);
-        }
-
-        ArrayList<Grade> grades = new ArrayList<>();
-        for(Long findId: request.getGradeIds()){
+        ArrayList<Grade> gradeList = new ArrayList<>();
+//        List<Account> accounts = new ArrayList<>();
+        for(Long findId : request.getGradeIds()){
             Grade grade = gradeRepository.findGradeById(findId);
-            grades.add(grade);
+            gradeList.add(grade);
+            accounts = grade.getAccount();
+            accounts.add(account);
+            grade.setAccount(accounts);
         }
+        account.setGrades(gradeList);
+        authenticationRepository.save(account);
+
+        ArrayList<Subject> subjectList = new ArrayList<>();
+//        List<Account> accounts = new ArrayList<>();
+        for(Long findId : request.getGradeIds()){
+            Subject subject = subjectRepository.findSubjectById(findId);
+            subjectList.add(subject);
+            accounts = subject.getAccount();
+            accounts.add(account);
+            subject.setAccount(accounts);
+        }
+        account.setGrades(gradeList);
+        authenticationRepository.save(account);
 
         TutorVideo tutorVideo = new TutorVideo();
         tutorVideo.setUrl(request.getTutorVideoUrl());
 
 
-        // Handle WeekDays
-        ArrayList<WeekDay> weekDays = new ArrayList<>();
-        for (Long findId : request.getWeekDayIds()) {
-            WeekDay day = weekDayRepository.findWeekDayById(findId);
-            day.setSubjectRegister(subjectRegister); // Link the WeekDay to SubjectRegister
-            weekDays.add(day);
-        }
-
-        // Handle TeachingSlots
-        ArrayList<TeachingSlot> teachingSlots = new ArrayList<>();
-        for (Long findId : request.getTeachingSlotIds()) {
-            TeachingSlot slot = teachingSlotRepository.findTeachingSlotById(findId);
-            WeekDay weekDay = slot.getWeekDay(); // Assume TeachingSlot already has a WeekDay
-            if (weekDay != null && weekDay.getSubjectRegister() == null) {
-                weekDay.setSubjectRegister(subjectRegister); // Link the WeekDay to SubjectRegister if not already linked
-                weekDays.add(weekDay);
+        for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
+            for (Long slotId : dayAndSlot.getTeachingSlotIds()){
+                ScheduleRecord scheduleRecord =  scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(),slotId);
+                List<Account> lists = new ArrayList<>();
+                if(scheduleRecord == null){
+                    scheduleRecord = new ScheduleRecord();
+                    WeekDay weekDay =  weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
+                    TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
+                    scheduleRecord.setWeekDay(weekDay);
+                    scheduleRecord.setTeachingSlot(teachingSlot);
+                    lists.add(account);
+                    scheduleRecord.setAccount(lists);
+                    scheduleRecordRepository.save(scheduleRecord);
+                }else{
+                    lists = scheduleRecord.getAccount();
+                    scheduleRecord.setAccount(lists);
+                    scheduleRecordRepository.save(scheduleRecord);
+                }
             }
-            teachingSlots.add(slot);
         }
 
-        subjectRegister.setEducationLevelId(level);
-        subjectRegister.setLocationIds(locations);
-        subjectRegister.setSubjectIds(subjects);
-        subjectRegister.setTutorVideoUrl(tutorVideo);
-        subjectRegister.setWeekDayIds(weekDays);
-        subjectRegister.setGradeIds((grades));
-        subjectRegister.setAccountId(account);
-        subjectRegister.setBrief(request.getBrief());
+        SendUpRoleRegistrationToModerator(account);
+    }
 
-        return subjectRegisterRepository.save(subjectRegister);
+    public void SendUpRoleRegistrationToModerator(Account student){
+        List<Account> listMod = authenticationRepository.findAccountByRole(RoleEnum.MODERATOR);
+        for (Account mod : listMod) {
+            //copy tu ForgetPassword
+            EmailDetail emailDetail = new EmailDetail();
+            emailDetail.setRecipient(mod.getEmail());
+            emailDetail.setSubject("Subject Registration Request for account " + student.getEmail() + "!");
+            emailDetail.setMsgBody("");
+            emailDetail.setButtonValue("Lets start to study!");
+            emailDetail.setFullName(mod.getFullname());
+            // chờ FE gửi link dashboard up role
+            emailDetail.setLink("http://localhost:5173/account");
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    emailService.sendMailTemplate(emailDetail);
+                }
+            };
+            new Thread(r).start();
+        }
+    }
+
+    public Account ApprovedSubject(UpRoleRequestByAccountId id){
+
+        Account account = authenticationRepository.findAccountById(id.getAccountId());
+
+        if(account != null){
+            SendEmailToTutor(account, "APPROVED!");
+            return authenticationRepository.save(account);
+        }
+        else{
+            throw new BadRequestException("Account is not found!");
+        }
+    }
+
+    //chuc nang duoi la` cho MOD bam duyet rejected trong DASHBOARD
+    public Account RejectedSubject(UpRoleRequestByAccountId id){
+
+        Account account = authenticationRepository.findAccountById(id.getAccountId());
+
+        if(account != null){
+            SendEmailToTutor(account, "REJECTED!");
+            return authenticationRepository.save(account);
+        }
+        else{
+            throw new BadRequestException("Account is not found!");
+        }
+    }
+
+    public void SendEmailToTutor(Account account, String msg){
+
+        //copy tu ForgetPassword
+        EmailDetail emailDetail = new EmailDetail();
+        emailDetail.setRecipient(account.getEmail());
+        emailDetail.setSubject("Response from MODERATOR for " + account.getEmail() + " subject registration request!");
+        emailDetail.setMsgBody(msg);
+        // chờ FE gửi web chính thức
+        emailDetail.setButtonValue("Welcome to new subject!");
+        emailDetail.setFullName(account.getFullname());
+        // chờ FE gửi link trang web
+        emailDetail.setLink("http://ondemandtutor.online/login");
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                emailService.sendMailTemplate(emailDetail);
+            }
+        };
+        new Thread(r).start();
     }
 
 }
