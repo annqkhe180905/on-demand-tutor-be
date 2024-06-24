@@ -1,17 +1,5 @@
 package online.ondemandtutor.be.api;
 
-
-import online.ondemandtutor.be.model.BookingRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-@RequestMapping("api")
-public class BookingAPI {
-
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import online.ondemandtutor.be.entity.Booking;
@@ -27,35 +15,32 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 @SecurityRequirement(name = "api")
+
 public class BookingAPI {
 
-    private final BookingService bookingService;
-
     @Autowired
-    public BookingAPI(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
+    BookingService bookingService;
 
-    @PostMapping("/booking")
+    @PostMapping
     public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest bookingRequest) {
         Booking booking = bookingService.createBooking(bookingRequest);
         return ResponseEntity.ok(booking);
     }
 
-    @GetMapping("/bookings")
+    @GetMapping
     public ResponseEntity<List<Booking>> getAllBookings() {
         List<Booking> bookings = bookingService.getAllBookings();
         return ResponseEntity.ok(bookings);
     }
 
-    @GetMapping("/booking/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Booking> getBookingById(@PathVariable Long id) {
         Optional<Booking> booking = bookingService.getBookingById(id);
         return booking.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/booking/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Booking> updateBooking(@PathVariable Long id, @RequestBody BookingRequest bookingRequest) {
         try {
             Booking updatedBooking = bookingService.updateBooking(id, bookingRequest);
@@ -65,9 +50,13 @@ public class BookingAPI {
         }
     }
 
-    @DeleteMapping("/booking/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
-        bookingService.deleteBooking(id);
-        return ResponseEntity.noContent().build();
+        try {
+            bookingService.deleteBooking(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
