@@ -30,6 +30,7 @@ public class SubjectService {
     private EducationLevelRepository educationLevelRepository;
     @Autowired
     private LocationRepository locationRepository;
+
     @Autowired
     private WeekDayRepository weekDayRepository;
 
@@ -43,6 +44,7 @@ public class SubjectService {
     private ScheduleRecordRepository scheduleRecordRepository;
     @Autowired
     private EmailService emailService;
+
 
     //CRUD: read all
     public List<Subject> findAll() {
@@ -101,6 +103,7 @@ public class SubjectService {
 //    }
 
 
+
     public void SubjectRegister(SubjectRegisterRequest request) {
         EducationLevel eduLv = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
         Account account = authenticationRepository.findAccountById(request.getAccountId());
@@ -147,9 +150,9 @@ public class SubjectService {
         account.setGrades(gradeList);
         authenticationRepository.save(account);
 
+
         TutorVideo tutorVideo = new TutorVideo();
         tutorVideo.setUrl(request.getTutorVideoUrl());
-
 
         for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
             for (Long slotId : dayAndSlot.getTeachingSlotIds()){
@@ -170,6 +173,7 @@ public class SubjectService {
                     scheduleRecordRepository.save(scheduleRecord);
                 }
             }
+
         }
 
         SendUpRoleRegistrationToModerator(account);
@@ -243,6 +247,7 @@ public class SubjectService {
             }
         };
         new Thread(r).start();
+
     }
 
 }

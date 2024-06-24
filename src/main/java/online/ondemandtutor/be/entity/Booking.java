@@ -11,6 +11,15 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+
+    private String bookingDetails;
+
+    @OneToOne(mappedBy = "booking")
+    private Complaint complaint;
+
+    @OneToOne(mappedBy = "booking")
+    private Review review;
+
     @ManyToOne
     @JoinColumn(name = "tutorSchedule_id")
     @JsonIgnore
@@ -35,8 +44,5 @@ public class Booking {
     private String description;
     private int money;
     private String location;
-
     // private String url;
-
-
 }
