@@ -15,26 +15,26 @@ public class BookingService {
     @Autowired
     BookingRepository bookingRepository;
 
-    @Autowired
-    public BookingService(BookingRepository bookingRepository) {
-        this.bookingRepository = bookingRepository;
-    }
-
+    // tạo mới booking dựa trên booking request
     public Booking createBooking(BookingRequest bookingRequest) {
         Booking booking = bookingRequest.toBooking();
-
-
+        // status booking = ok
+        booking.setStatus("OK");
         return bookingRepository.save(booking);
     }
 
+    // lấy ds tất cả booking
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
 
+    // tìm 1 booking theo id
     public Optional<Booking> getBookingById(Long id) {
         return bookingRepository.findById(Long.valueOf(String.valueOf(id)));
+
     }
 
+    // update booking dựa trên booking request và id
     public Booking updateBooking(Long id, BookingRequest bookingRequest) {
         Optional<Booking> optionalBooking = bookingRepository.findById(Long.valueOf(String.valueOf(id)));
         if (optionalBooking.isPresent()) {
@@ -44,13 +44,17 @@ public class BookingService {
             booking.setTutoringClass(bookingRequest.getClassTaught());
             booking.setSubjectTaught(bookingRequest.getSubjectTaught());
             booking.setBrief(bookingRequest.getBrief());
+            // Đảm bảo trạng thái của booking vẫn là OK
+            booking.setStatus("OK");
             return bookingRepository.save(booking);
         } else {
             throw new RuntimeException("Booking not found with id " + id);
         }
     }
 
+    // xóa booking
     public void deleteBooking(Long id) {
         bookingRepository.deleteById(Long.valueOf(String.valueOf(id)));
+
     }
 }
