@@ -30,12 +30,13 @@ public class BookingService {
 
     // tìm 1 booking theo id
     public Optional<Booking> getBookingById(Long id) {
-        return bookingRepository.findById(id);
+        return bookingRepository.findById(Long.valueOf(String.valueOf(id)));
+
     }
 
     // update booking dựa trên booking request và id
     public Booking updateBooking(Long id, BookingRequest bookingRequest) {
-        Optional<Booking> optionalBooking = bookingRepository.findById(id);
+        Optional<Booking> optionalBooking = bookingRepository.findById(Long.valueOf(String.valueOf(id)));
         if (optionalBooking.isPresent()) {
             Booking booking = optionalBooking.get();
             booking.setLiteracy(bookingRequest.getLiteracy());
@@ -53,10 +54,7 @@ public class BookingService {
 
     // xóa booking
     public void deleteBooking(Long id) {
-        if (bookingRepository.existsById(id)) {
-            bookingRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Booking not found with id " + id);
-        }
+        bookingRepository.deleteById(Long.valueOf(String.valueOf(id)));
+
     }
 }

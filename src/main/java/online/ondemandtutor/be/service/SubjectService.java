@@ -1,8 +1,9 @@
 package online.ondemandtutor.be.service;
 
+import online.ondemandtutor.be.api.AccountAPI;
 import online.ondemandtutor.be.entity.*;
+import online.ondemandtutor.be.enums.RequestStatus;
 import online.ondemandtutor.be.enums.RoleEnum;
-import online.ondemandtutor.be.enums.StatusEnum;
 import online.ondemandtutor.be.exception.BadRequestException;
 import online.ondemandtutor.be.model.DayAndSlotRequest;
 import online.ondemandtutor.be.model.EmailDetail;
@@ -44,6 +45,10 @@ public class SubjectService {
     private ScheduleRecordRepository scheduleRecordRepository;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private TutorVideoRepository tutorVideoRepository;
+    @Autowired
+    private AccountAPI accountAPI;
 
 
     //CRUD: read all
@@ -153,6 +158,12 @@ public class SubjectService {
 
         TutorVideo tutorVideo = new TutorVideo();
         tutorVideo.setUrl(request.getTutorVideoUrl());
+        tutorVideo.setAccount(account);
+//        account.getTutorVideos().add(tutorVideo);
+        tutorVideoRepository.save(tutorVideo);
+
+        account.setBrief(request.getBrief());
+        authenticationRepository.save(account);
 
         for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
             for (Long slotId : dayAndSlot.getTeachingSlotIds()){
@@ -173,13 +184,24 @@ public class SubjectService {
                     scheduleRecordRepository.save(scheduleRecord);
                 }
             }
-
         }
-
-        SendUpRoleRegistrationToModerator(account);
+        pendingAccount(account);
+        SendSubjectRegistrationToModerator(account);
     }
 
-    public void SendUpRoleRegistrationToModerator(Account student){
+    public Account pendingAccount (Account id){
+        Account account = authenticationRepository.findAccountById(id.getId());
+
+        if(account != null){
+            account.setSubjectRegistrationStatus(RequestStatus.PENDING);
+            return authenticationRepository.save(account);
+        }
+        else{
+            throw new BadRequestException("Account is not found!");
+        }
+    }
+
+    public void SendSubjectRegistrationToModerator(Account student){
         List<Account> listMod = authenticationRepository.findAccountByRole(RoleEnum.MODERATOR);
         for (Account mod : listMod) {
             //copy tu ForgetPassword
@@ -190,11 +212,11 @@ public class SubjectService {
             emailDetail.setButtonValue("Lets start to study!");
             emailDetail.setFullName(mod.getFullname());
             // chờ FE gửi link dashboard up role
-            emailDetail.setLink("http://localhost:5173/account");
+            emailDetail.setLink("http://localhost:5173/register-request");
             Runnable r = new Runnable() {
                 @Override
                 public void run() {
-                    emailService.sendMailTemplate(emailDetail);
+                    emailService.sendSubjectRegistrationEmail(emailDetail);
                 }
             };
             new Thread(r).start();
@@ -206,6 +228,7 @@ public class SubjectService {
         Account account = authenticationRepository.findAccountById(id.getAccountId());
 
         if(account != null){
+            account.setSubjectRegistrationStatus(RequestStatus.APPROVED);
             SendEmailToTutor(account, "APPROVED!");
             return authenticationRepository.save(account);
         }
@@ -220,6 +243,7 @@ public class SubjectService {
         Account account = authenticationRepository.findAccountById(id.getAccountId());
 
         if(account != null){
+            account.setSubjectRegistrationStatus(RequestStatus.REJECTED);
             SendEmailToTutor(account, "REJECTED!");
             return authenticationRepository.save(account);
         }
@@ -249,5 +273,14 @@ public class SubjectService {
         new Thread(r).start();
 
     }
+
+    public List<Account> getAllAccountsHaveSubjectRegistrationRequest(){
+        return authenticationRepository.findAccountsBySubjectRegistrationStatus(RequestStatus.PENDING);
+    }
+
+    public List<Account> getAllAccountsHaveApprovedSubjectRegistrationRequest(){
+        return authenticationRepository.findAccountsBySubjectRegistrationStatus(RequestStatus.APPROVED);
+    }
+
 
 }
