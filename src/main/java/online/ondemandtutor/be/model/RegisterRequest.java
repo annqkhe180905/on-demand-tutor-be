@@ -10,7 +10,8 @@ public class RegisterRequest {
     String fullname;
 
     //test
-    public RegisterRequest(String s, String s1, String number, String mail) {
-    }
-
+//    public RegisterRequest(String s, String s1, String number, String mail) {
+//    }
+//    public RegisterRequest() {
+//    }
 }

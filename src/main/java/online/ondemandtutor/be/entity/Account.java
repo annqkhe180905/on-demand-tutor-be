@@ -1,7 +1,7 @@
 package online.ondemandtutor.be.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 import online.ondemandtutor.be.enums.RequestStatus;
@@ -11,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.awt.image.ImageProducer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -56,19 +55,13 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "account")
     List<TutorVideo> tutorVideos;
 
-//    @OneToMany(mappedBy = "account")
-//    List<Complaint> complaints;
-//
-//    @OneToMany(mappedBy = "account")
-//    List<Review> reviews;
-//
-//
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "tutor_schedule_id", referencedColumnName = "id")
-//    TutorSchedule tutorSchedules;
+    @OneToMany(mappedBy = "account")
+    List<Complaint> complaints;
+
+    @OneToMany(mappedBy = "account")
+    List<Review> reviews;
 
     @ManyToMany(mappedBy = "account",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-            @JsonBackReference
     List<ScheduleRecord> scheduleRecords;
 
     //test case
@@ -86,13 +79,12 @@ public class Account implements UserDetails {
     @ManyToMany(mappedBy = "account")
     List<Grade> grades;
 
-    @ManyToMany(mappedBy = "account")
-    List<WeekDay> weekDays;
 
     @ManyToOne
     @JoinColumn(name = "education_level_id")
     EducationLevel educationLevel;
 
+    private String brief;
 
     //////////
 

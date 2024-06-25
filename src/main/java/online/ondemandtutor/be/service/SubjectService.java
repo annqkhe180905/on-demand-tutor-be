@@ -1,5 +1,6 @@
 package online.ondemandtutor.be.service;
 
+import online.ondemandtutor.be.api.AccountAPI;
 import online.ondemandtutor.be.entity.*;
 import online.ondemandtutor.be.enums.RequestStatus;
 import online.ondemandtutor.be.enums.RoleEnum;
@@ -44,6 +45,10 @@ public class SubjectService {
     private ScheduleRecordRepository scheduleRecordRepository;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private TutorVideoRepository tutorVideoRepository;
+    @Autowired
+    private AccountAPI accountAPI;
 
 
     //CRUD: read all
@@ -153,6 +158,12 @@ public class SubjectService {
 
         TutorVideo tutorVideo = new TutorVideo();
         tutorVideo.setUrl(request.getTutorVideoUrl());
+        tutorVideo.setAccount(account);
+//        account.getTutorVideos().add(tutorVideo);
+        tutorVideoRepository.save(tutorVideo);
+
+        account.setBrief(request.getBrief());
+        authenticationRepository.save(account);
 
         for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
             for (Long slotId : dayAndSlot.getTeachingSlotIds()){
@@ -173,13 +184,24 @@ public class SubjectService {
                     scheduleRecordRepository.save(scheduleRecord);
                 }
             }
-
         }
-        account.setSubjectRegistrationStatus(RequestStatus.PENDING);
-        SendUpRoleRegistrationToModerator(account);
+        pendingAccount(account);
+        SendSubjectRegistrationToModerator(account);
     }
 
-    public void SendUpRoleRegistrationToModerator(Account student){
+    public Account pendingAccount (Account id){
+        Account account = authenticationRepository.findAccountById(id.getId());
+
+        if(account != null){
+            account.setSubjectRegistrationStatus(RequestStatus.PENDING);
+            return authenticationRepository.save(account);
+        }
+        else{
+            throw new BadRequestException("Account is not found!");
+        }
+    }
+
+    public void SendSubjectRegistrationToModerator(Account student){
         List<Account> listMod = authenticationRepository.findAccountByRole(RoleEnum.MODERATOR);
         for (Account mod : listMod) {
             //copy tu ForgetPassword
@@ -190,11 +212,11 @@ public class SubjectService {
             emailDetail.setButtonValue("Lets start to study!");
             emailDetail.setFullName(mod.getFullname());
             // chờ FE gửi link dashboard up role
-            emailDetail.setLink("http://localhost:5173/account");
+            emailDetail.setLink("http://localhost:5173/register-request");
             Runnable r = new Runnable() {
                 @Override
                 public void run() {
-                    emailService.sendMailTemplate(emailDetail);
+                    emailService.sendSubjectRegistrationEmail(emailDetail);
                 }
             };
             new Thread(r).start();
@@ -259,5 +281,6 @@ public class SubjectService {
     public List<Account> getAllAccountsHaveApprovedSubjectRegistrationRequest(){
         return authenticationRepository.findAccountsBySubjectRegistrationStatus(RequestStatus.APPROVED);
     }
+
 
 }

@@ -20,12 +20,11 @@ public class ScheduleRecord {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "weekDay_id")
     private WeekDay weekDay;
 
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "teachingSlot_id")
     private TeachingSlot teachingSlot;
@@ -36,6 +35,5 @@ public class ScheduleRecord {
             joinColumns = @JoinColumn(name = "scheduleRecord_id"),
             inverseJoinColumns = @JoinColumn(name = "account_id")
     )
-    @JsonManagedReference
     private List<Account> account =  new ArrayList<>();
 }
