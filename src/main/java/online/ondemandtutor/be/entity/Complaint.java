@@ -23,8 +23,8 @@ public class Complaint {
     @JoinColumn(name = "account_id")
     @JsonIgnore
     Account account;
-    @OneToOne
-    @JoinColumn(name = "booking_id", referencedColumnName = "id")
-    private Booking booking;
+//    @OneToOne
+//    @JoinColumn(name = "booking_id", referencedColumnName = "id")
+//    private Booking booking;
 
 }
