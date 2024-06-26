@@ -79,12 +79,19 @@ public class Account implements UserDetails {
     @ManyToMany(mappedBy = "account")
     List<Grade> grades;
 
-
     @ManyToOne
     @JoinColumn(name = "education_level_id")
     EducationLevel educationLevel;
 
     private String brief;
+
+    //////////
+
+    @ManyToMany(mappedBy = "tutors")
+    private List<Booking> tutorBookings;
+
+    @ManyToMany(mappedBy = "students")
+    private List<Booking> studentBookings;
 
     //////////
 

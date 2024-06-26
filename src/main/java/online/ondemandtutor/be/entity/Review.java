@@ -29,8 +29,8 @@ public class Review {
     @JsonIgnore
     Account account;
 
-    @OneToOne
-    @JoinColumn(name = "booking_id", referencedColumnName = "id")
-    private Booking booking;
+//    @OneToOne
+//    @JoinColumn(name = "booking_id", referencedColumnName = "id")
+//    private Booking booking;
 
 }

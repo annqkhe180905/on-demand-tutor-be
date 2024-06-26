@@ -58,7 +58,7 @@ public class SubjectAPI {
 
     @PostMapping("/subject/register-for-tutor")
     public void registerForTutor(@RequestBody SubjectRegisterRequest request) {
-         subjectService.SubjectRegister(request);
+         subjectService.subjectRegister(request);
     }
 
     @PostMapping("/approved-subject-registration")
@@ -85,6 +85,11 @@ public class SubjectAPI {
     public ResponseEntity<List<Account>> getApprovedAccount (){
         List<Account> printAll = subjectService.getAllAccountsHaveApprovedSubjectRegistrationRequest();
         return ResponseEntity.ok(printAll);
+    }
+
+    @PutMapping("/subject/register-for-tutor")
+    public void updateSubjectRegister(@RequestBody SubjectRegisterRequest request) {
+        subjectService.updateSubjectRegister(request);
     }
 
 
