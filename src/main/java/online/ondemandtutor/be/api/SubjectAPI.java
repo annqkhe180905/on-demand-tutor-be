@@ -93,4 +93,10 @@ public class SubjectAPI {
     }
 
 
+    @GetMapping("/rejected-registration")
+    @PreAuthorize("hasAuthority('MODERATOR')")
+    public ResponseEntity<List<Account>> getRejectedAccount (){
+        List<Account> printAll = subjectService.getAllAccountsHaveApprovedSubjectRegistrationRequest();
+        return ResponseEntity.ok(printAll);
+    }
 }

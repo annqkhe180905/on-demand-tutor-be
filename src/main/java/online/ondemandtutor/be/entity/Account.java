@@ -55,6 +55,7 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "account")
     List<TutorVideo> tutorVideos;
 
+
     @OneToMany(mappedBy = "account")
     List<Complaint> complaints;
 

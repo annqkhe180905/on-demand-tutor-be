@@ -289,7 +289,6 @@ public class SubjectService {
         return authenticationRepository.findAccountsBySubjectRegistrationStatus(RequestStatus.APPROVED);
     }
 
-
     public void updateSubjectRegister(SubjectRegisterRequest request) {
         EducationLevel eduLv = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
         Account account = authenticationRepository.findAccountById(request.getAccountId());
@@ -371,6 +370,5 @@ public class SubjectService {
         pendingAccount(account);
         SendSubjectRegistrationToModerator(account);
     }
-
 
 }
