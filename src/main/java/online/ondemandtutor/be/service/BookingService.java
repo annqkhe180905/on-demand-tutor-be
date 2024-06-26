@@ -39,7 +39,6 @@ public class BookingService {
     // update booking dựa trên booking request và id
     public Booking updateBooking(Long id, BookingRequest bookingRequest) {
         Optional<Booking> optionalBooking = bookingRepository.findById(Long.valueOf(String.valueOf(id)));
-
         if (optionalBooking.isPresent()) {
             Booking booking = optionalBooking.get();
             booking.setLiteracy(bookingRequest.getLiteracy());

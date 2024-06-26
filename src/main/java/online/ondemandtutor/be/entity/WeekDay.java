@@ -14,28 +14,8 @@ public class WeekDay {
     Long id;
     String day;
 
-//    @ManyToOne
-//    @JoinColumn(name = "tutorSchedule_id")
-//    @JsonIgnore
-//    TutorSchedule tutorSchedule;
-
-//    @OneToMany(mappedBy = "weekDay")
-//    List<TeachingSlot> teachingSlots;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "weekDay")
     List<ScheduleRecord> scheduleRecords;
-
-    @ManyToMany
-    @JoinTable
-            (
-                    joinColumns = @JoinColumn(name = "week_day_id"),
-                    inverseJoinColumns = @JoinColumn(name = "account_id")
-            )
-    @JsonIgnore
-    List<Account> account;
-
-    @ManyToMany(mappedBy = "weekDay")
-    List<TeachingSlot> teachingSlots;
-
 
 }

@@ -63,6 +63,7 @@ public class SubjectAPI {
 
     @PostMapping("/approved-subject-registration")
     @PreAuthorize("hasAuthority('MODERATOR')")
+
     public void approvedSubjectRegistration(@RequestBody UpRoleRequestByAccountId id){
         subjectService.ApprovedSubject(id);
     }
@@ -73,12 +74,19 @@ public class SubjectAPI {
         subjectService.RejectedSubject(id);
     }
 
-    @GetMapping("/approved-registration")
+    @GetMapping("/pending-registration")
     @PreAuthorize("hasAuthority('MODERATOR')")
-    public ResponseEntity<List<Account>> getApprovedAccount (){
+    public ResponseEntity<List<Account>> getAccountHasRequest (){
         List<Account> printAll = subjectService.getAllAccountsHaveSubjectRegistrationRequest();
         return ResponseEntity.ok(printAll);
     }
+
+    @GetMapping("/approved-registration")
+    public ResponseEntity<List<Account>> getApprovedAccount (){
+        List<Account> printAll = subjectService.getAllAccountsHaveApprovedSubjectRegistrationRequest();
+        return ResponseEntity.ok(printAll);
+    }
+
 
     @GetMapping("/rejected-registration")
     @PreAuthorize("hasAuthority('MODERATOR')")
