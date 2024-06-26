@@ -156,6 +156,16 @@ public class AccountService {
 
     public Account updateAccount(UpdateRequest updateRequest) {
         Account account = authenticationService.getCurrentAccount();
+//        if(account != null){
+//            account.setPhone(updateRequest.getPhone());
+//            account.setFullname(updateRequest.getFullname());
+//
+//            Account newAccount = authenticationRepository.save(account);
+//            return newAccount;
+//        }
+//        else {
+//            throw new BadRequestException("Account is not found!");
+//        }
         account.setPhone(updateRequest.getPhone());
         account.setFullname(updateRequest.getFullname());
 
