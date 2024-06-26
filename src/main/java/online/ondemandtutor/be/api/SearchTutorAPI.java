@@ -21,4 +21,16 @@ public class SearchTutorAPI {
         List<SearchTutor> tutors = searchTutorService.searchTutorsByName(searchTutorRequest);
         return ResponseEntity.ok(tutors);
     }
+
+    @PostMapping("/bySubject")
+    public ResponseEntity<List<SearchTutor>> searchTutorsBySubject(@RequestBody SearchTutorRequest searchTutorRequest) {
+        List<SearchTutor> tutors = searchTutorService.searchTutorsBySubject(searchTutorRequest);
+        return ResponseEntity.ok(tutors);
+    }
+
+    @PostMapping("/byLocation")
+    public ResponseEntity<List<SearchTutor>> searchTutorsByLocation(@RequestBody SearchTutorRequest searchTutorRequest) {
+        List<SearchTutor> tutors = searchTutorService.searchTutorsByLocation(searchTutorRequest);
+        return ResponseEntity.ok(tutors);
+    }
 }
