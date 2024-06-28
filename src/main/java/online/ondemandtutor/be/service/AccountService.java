@@ -43,6 +43,9 @@ public class AccountService {
             certificate.setUrl(upRoleRequest.getCertificateUrl());
             certificate.setAccount(account);
 
+            if (account.getRequestStatus() == StatusEnum.PENDING) {
+                throw new BadRequestException("Your request is pending!");
+            }
             account.setRequestStatus(StatusEnum.PENDING);
             account.getTutorCertificates().add(certificate);
             SendUpRoleRegistrationToModerator(account);

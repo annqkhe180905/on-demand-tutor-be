@@ -2,11 +2,13 @@ package online.ondemandtutor.be.service;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
+import online.ondemandtutor.be.entity.Wallet;
 import online.ondemandtutor.be.enums.RoleEnum;
 import online.ondemandtutor.be.exception.AuthException;
 import online.ondemandtutor.be.exception.BadRequestException;
 import online.ondemandtutor.be.model.*;
 import online.ondemandtutor.be.repository.AuthenticationRepository;
+import online.ondemandtutor.be.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,6 +38,8 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     EmailService emailService;
+    @Autowired
+    private WalletRepository walletRepository;
 
     public Account register(RegisterRequest registerRequest){
         //test only
@@ -51,8 +55,12 @@ public class AuthenticationService implements UserDetailsService {
         account.setPhone(registerRequest.getPhone());
         account.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 
+//        Wallet wallet = new Wallet();
+//        wallet.setBalance(0);
+//        account.setWallet(wallet);
         Account newAccount = authenticationRepository.save(account); //save to db
-
+//        wallet.setAccount(account);
+//        walletRepository.save(wallet);
         return newAccount;
     }
 
