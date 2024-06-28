@@ -2,6 +2,7 @@ package online.ondemandtutor.be.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import online.ondemandtutor.be.enums.RequestStatus;
@@ -48,11 +49,13 @@ public class Account implements UserDetails {
 
     //setAvatar cho user, up certificate và video cho tutor
 
+    @Column(length = 1000)
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<TutorCertificate> tutorCertificates = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "account")
+    @Column(length = 1000)
     List<TutorVideo> tutorVideos;
 
 
@@ -84,15 +87,21 @@ public class Account implements UserDetails {
     @JoinColumn(name = "education_level_id")
     EducationLevel educationLevel;
 
+    @Column(length = 500)
     private String brief;
 
     //////////
 
     @ManyToMany(mappedBy = "tutors")
     private List<Booking> tutorBookings;
-
     @ManyToMany(mappedBy = "students")
     private List<Booking> studentBookings;
+
+    //////////
+
+//    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private Wallet wallet;
 
     //////////
 
