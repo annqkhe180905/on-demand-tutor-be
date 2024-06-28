@@ -53,7 +53,6 @@ public class AccountAPI {
     }
 
     @GetMapping("/account/{id}")
-//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity showAccountById(@PathVariable Long id) {
         Account printOne = accountService.getAccountById(id);
         return ResponseEntity.ok(printOne);

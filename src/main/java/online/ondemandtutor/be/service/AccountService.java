@@ -8,6 +8,7 @@ import online.ondemandtutor.be.enums.StatusEnum;
 import online.ondemandtutor.be.exception.BadRequestException;
 import online.ondemandtutor.be.model.*;
 import online.ondemandtutor.be.repository.AuthenticationRepository;
+import online.ondemandtutor.be.repository.TutorCertificateRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class AccountService {
     private TokenService tokenService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private TutorCertificateRepository tutorCertificateRepository;
 
     //up Role cho registered user -> phai thong qua MOD duyet
     //  bao gom certificate URL -> gui den mail cho MOD -> APPROVED OR REJECTED
@@ -43,6 +46,7 @@ public class AccountService {
             account.setRequestStatus(StatusEnum.PENDING);
             account.getTutorCertificates().add(certificate);
             SendUpRoleRegistrationToModerator(account);
+            tutorCertificateRepository.save(certificate);
             return authenticationRepository.save(account);
         }
         else{
@@ -74,7 +78,6 @@ public class AccountService {
         if(account != null){
             account.setRequestStatus(StatusEnum.REJECTED);
             SendUpRoleRequestStatusToStudent(account, "REJECTED!");
-
             return authenticationRepository.save(account);
         }
         else{
@@ -97,12 +100,11 @@ public class AccountService {
             Runnable r = new Runnable() {
                 @Override
                 public void run() {
-                    emailService.sendMailTemplate(emailDetail);
+                    emailService.sendUpRoleRegistrationEmail(emailDetail);
                 }
             };
             new Thread(r).start();
         }
-
     }
     // he thong gui mail thong bao status Up Role Request cho STUDENT sau khi MOD thao tac
     public void SendUpRoleRequestStatusToStudent(Account account, String msg){
@@ -120,7 +122,7 @@ public class AccountService {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                emailService.sendMailTemplate(emailDetail);
+                emailService.sendApprovedUpRoleRequestEmail(emailDetail);
             }
         };
         new Thread(r).start();
@@ -154,6 +156,16 @@ public class AccountService {
 
     public Account updateAccount(UpdateRequest updateRequest) {
         Account account = authenticationService.getCurrentAccount();
+//        if(account != null){
+//            account.setPhone(updateRequest.getPhone());
+//            account.setFullname(updateRequest.getFullname());
+//
+//            Account newAccount = authenticationRepository.save(account);
+//            return newAccount;
+//        }
+//        else {
+//            throw new BadRequestException("Account is not found!");
+//        }
         account.setPhone(updateRequest.getPhone());
         account.setFullname(updateRequest.getFullname());
 

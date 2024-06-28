@@ -25,10 +25,14 @@ public class Subject {
 //    @JsonIgnore
 //    private TutorSchedule tutorSchedule;
 
-    @ManyToOne
-    @JoinColumn(name = "subjectRegister_id")
+    @ManyToMany
+    @JoinTable
+            (
+                    joinColumns = @JoinColumn(name = "subject_id"),
+                    inverseJoinColumns = @JoinColumn(name = "account_id")
+            )
     @JsonIgnore
-    SubjectRegister subjectRegister;
+    List<Account> account;
 
     private String name;
 }

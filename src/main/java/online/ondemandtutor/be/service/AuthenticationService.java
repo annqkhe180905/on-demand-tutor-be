@@ -38,6 +38,12 @@ public class AuthenticationService implements UserDetailsService {
     EmailService emailService;
 
     public Account register(RegisterRequest registerRequest){
+        //test only
+        Account existingAccount = authenticationRepository.findAccountByEmail(registerRequest.getEmail());
+        if (existingAccount != null) {
+            throw new RuntimeException("Email already in use");
+        }
+
         Account account = new Account();
         account.setEmail(registerRequest.getEmail());
         account.setFullname(registerRequest.getFullname());
@@ -62,9 +68,16 @@ public class AuthenticationService implements UserDetailsService {
 
         }
 
+        //test only
+        Account account = authenticationRepository.findAccountByEmail(loginRequest.getEmail());
+        if (account == null || !passwordEncoder.matches(loginRequest.getPassword(), account.getPassword())) {
+            throw new AuthException("Email or password is not correct!");
+        }
+
+
         // => account chuẩn
 
-        Account account = authenticationRepository.findAccountByEmail(loginRequest.getEmail());
+//        Account account = authenticationRepository.findAccountByEmail(loginRequest.getEmail());
         if(account.isDeleted() == true){
             throw new BadRequestException("Please try another account!");
         }
@@ -153,7 +166,8 @@ public class AuthenticationService implements UserDetailsService {
 
 
     public Account getCurrentAccount() {
-        return (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account accountFilter = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return authenticationRepository.findAccountById(accountFilter.getId());
     }
 
     public void ResetPassword(ResetPasswordRequest resetPasswordRequest) {

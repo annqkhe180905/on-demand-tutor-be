@@ -1,6 +1,7 @@
 package online.ondemandtutor.be.repository;
 
 import online.ondemandtutor.be.entity.Booking;
+import online.ondemandtutor.be.enums.RoleEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -15,12 +15,9 @@ public class TeachingSlot {
 
     String time;
 
-    @ManyToOne
-    @JoinColumn(name = "weekday_id")
     @JsonIgnore
-    WeekDay weekDay;
-
     @OneToMany(mappedBy = "teachingSlot")
     List<ScheduleRecord> scheduleRecords;
+
 
 }
