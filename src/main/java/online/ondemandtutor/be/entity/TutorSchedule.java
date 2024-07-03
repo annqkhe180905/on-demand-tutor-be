@@ -17,7 +17,7 @@ public class TutorSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
+    @JsonIgnore
     @OneToOne(mappedBy = "tutorSchedules")
     Account account;
 

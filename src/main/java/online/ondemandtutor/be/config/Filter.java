@@ -47,7 +47,13 @@ public class Filter extends OncePerRequestFilter {
             "/api/register",
             "/api/forget-password",
             "/api/login-google",
-            "/api/subject/{name}"
+            "/api/subject/{name}",
+            "/api/education-level",
+            "/api/location",
+            "/api/week-days",
+            "/api/teaching-slots",
+            "/api/grade",
+            "/api/approved-registration"
 
     );
 

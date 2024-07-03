@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 public class Grade {
@@ -13,9 +15,12 @@ public class Grade {
 
     private String grade;
 
-    @ManyToOne
-    @JoinColumn(name = "subjectRegister_id")
+    @ManyToMany
+    @JoinTable
+            (
+                    joinColumns = @JoinColumn(name = "grade_id"),
+                    inverseJoinColumns = @JoinColumn(name = "account_id")
+            )
     @JsonIgnore
-    SubjectRegister subjectRegister;
-
+    List<Account> account;
 }

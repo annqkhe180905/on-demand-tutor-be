@@ -26,8 +26,4 @@ public class TutorVideo {
     @JsonIgnore
     Account account;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "subject_register_id", referencedColumnName = "id")
-    SubjectRegister subjectRegister;
-
 }

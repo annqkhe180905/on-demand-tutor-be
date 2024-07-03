@@ -8,8 +8,8 @@ import java.util.List;
 
 @Repository
 public interface EducationLevelRepository extends JpaRepository<EducationLevel, Long> {
-    EducationLevel findEducationLevelById(long id);
+    EducationLevel findEducationLevelById(Long id);
 
+//    List<EducationLevel> findAllByEducationLevel();
     List<EducationLevel> findAll();
-
 }
