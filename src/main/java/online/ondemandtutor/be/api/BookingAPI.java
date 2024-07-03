@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/bookings")
 @SecurityRequirement(name = "api")
@@ -22,18 +24,21 @@ public class BookingAPI {
         return ResponseEntity.ok(booking);
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<Booking>> getAllBookings() {
-//        List<Booking> bookings = bookingService.getAllBookings();
-//        return ResponseEntity.ok(bookings);
-//    }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Booking> getBookingById(@PathVariable Long id) {
-//        Optional<Booking> booking = bookingService.getBookingById(id);
-//        return booking.map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
-//    }
+    @PutMapping("/booking")
+    public ResponseEntity updateBooking(@RequestBody BookingRequest bookingRequest) {
+        Booking booking = bookingService.updateBooking(bookingRequest);
+        return ResponseEntity.ok(booking);
+    }
+
+    @GetMapping
+    public List<Booking> getAllBookings() {
+        return bookingService.getAllBookings();
+    }
+
+    @GetMapping("/{id}")
+    public Booking getBookingById(@PathVariable Long id) {
+        return bookingService.getBookingById(id);
+    }
 //
 //    @PutMapping("/{id}")
 //    public ResponseEntity<Booking> updateBooking(@PathVariable Long id, @RequestBody BookingRequest bookingRequest) {
