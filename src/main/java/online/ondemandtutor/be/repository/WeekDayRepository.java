@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface WeekDayRepository extends JpaRepository<WeekDay, Long> {
-//    public List<WeekDay> findWeekDays();
+    public List<WeekDay> findAll();
     public WeekDay findWeekDayById(Long id);
 
 }

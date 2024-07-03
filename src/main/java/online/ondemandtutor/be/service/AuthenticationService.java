@@ -2,11 +2,13 @@ package online.ondemandtutor.be.service;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
+import online.ondemandtutor.be.entity.Wallet;
 import online.ondemandtutor.be.enums.RoleEnum;
 import online.ondemandtutor.be.exception.AuthException;
 import online.ondemandtutor.be.exception.BadRequestException;
 import online.ondemandtutor.be.model.*;
 import online.ondemandtutor.be.repository.AuthenticationRepository;
+import online.ondemandtutor.be.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,8 +38,16 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     EmailService emailService;
+    @Autowired
+    private WalletRepository walletRepository;
 
     public Account register(RegisterRequest registerRequest){
+        //test only
+        Account existingAccount = authenticationRepository.findAccountByEmail(registerRequest.getEmail());
+        if (existingAccount != null) {
+            throw new RuntimeException("Email already in use");
+        }
+
         Account account = new Account();
         account.setEmail(registerRequest.getEmail());
         account.setFullname(registerRequest.getFullname());
@@ -45,8 +55,12 @@ public class AuthenticationService implements UserDetailsService {
         account.setPhone(registerRequest.getPhone());
         account.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 
+//        Wallet wallet = new Wallet();
+//        wallet.setBalance(0);
+//        account.setWallet(wallet);
         Account newAccount = authenticationRepository.save(account); //save to db
-
+//        wallet.setAccount(account);
+//        walletRepository.save(wallet);
         return newAccount;
     }
 
@@ -62,9 +76,16 @@ public class AuthenticationService implements UserDetailsService {
 
         }
 
+        //test only
+        Account account = authenticationRepository.findAccountByEmail(loginRequest.getEmail());
+        if (account == null || !passwordEncoder.matches(loginRequest.getPassword(), account.getPassword())) {
+            throw new AuthException("Email or password is not correct!");
+        }
+
+
         // => account chuẩn
 
-        Account account = authenticationRepository.findAccountByEmail(loginRequest.getEmail());
+//        Account account = authenticationRepository.findAccountByEmail(loginRequest.getEmail());
         if(account.isDeleted() == true){
             throw new BadRequestException("Please try another account!");
         }
@@ -153,7 +174,8 @@ public class AuthenticationService implements UserDetailsService {
 
 
     public Account getCurrentAccount() {
-        return (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account accountFilter = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return authenticationRepository.findAccountById(accountFilter.getId());
     }
 
     public void ResetPassword(ResetPasswordRequest resetPasswordRequest) {

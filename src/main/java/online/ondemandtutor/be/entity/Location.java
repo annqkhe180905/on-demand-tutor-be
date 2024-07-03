@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 public class Location {
@@ -13,8 +15,12 @@ public class Location {
 
     private String location;
 
-    @ManyToOne
-    @JoinColumn(name = "subjectRegister_id")
+    @ManyToMany
+    @JoinTable
+            (
+                    joinColumns = @JoinColumn(name = "location_id") ,
+                    inverseJoinColumns = @JoinColumn(name = "account_id")
+            )
     @JsonIgnore
-    private SubjectRegister subjectRegister;
+    List<Account> account;
 }

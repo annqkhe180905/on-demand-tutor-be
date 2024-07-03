@@ -1,7 +1,10 @@
 package online.ondemandtutor.be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -12,7 +15,11 @@ public class EducationLevel {
 
     private String educationLevel;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "subject_register_id", referencedColumnName = "id")
-    SubjectRegister subjectRegister;
+
+
+    @OneToMany(mappedBy = "educationLevel")
+    @JsonIgnore
+    List<Account> account;
+
+
 }
