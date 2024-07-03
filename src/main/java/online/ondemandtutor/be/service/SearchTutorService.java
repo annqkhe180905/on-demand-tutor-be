@@ -17,4 +17,12 @@ public class SearchTutorService {
     public List<SearchTutor> searchTutorsByName(SearchTutorRequest searchTutorRequest) {
         return searchTutorRepository.findByNameContainingIgnoreCase(searchTutorRequest.getName());
     }
+
+    public List<SearchTutor> searchTutorsBySubject(SearchTutorRequest searchTutorRequest) {
+        return searchTutorRepository.findBySubjectContainingIgnoreCase(searchTutorRequest.getSubject());
+    }
+
+    public List<SearchTutor> searchTutorsByLocation(SearchTutorRequest searchTutorRequest) {
+        return searchTutorRepository.findByLocationContainingIgnoreCase(searchTutorRequest.getLocation());
+    }
 }

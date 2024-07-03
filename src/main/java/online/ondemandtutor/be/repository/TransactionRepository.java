@@ -18,4 +18,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     //    public List<Transaction> findTransactionsByWalletId (Long id);
 
     List<Transaction> findTransactionByTransactionType(TransactionEnum status);
+
 }

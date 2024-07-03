@@ -14,4 +14,5 @@ public class SearchTutor {
     private String subject;
     private String location;
     private String bio;
+
 }

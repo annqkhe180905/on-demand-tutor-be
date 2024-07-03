@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface SearchTutorRepository extends JpaRepository<SearchTutor, Long> {
     List<SearchTutor> findByNameContainingIgnoreCase(String name);
+    List<SearchTutor> findBySubjectContainingIgnoreCase(String subject);
+    List<SearchTutor> findByLocationContainingIgnoreCase(String location);
 }
