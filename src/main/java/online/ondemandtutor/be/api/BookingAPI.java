@@ -39,6 +39,8 @@ public class BookingAPI {
     public Booking getBookingById(@PathVariable Long id) {
         return bookingService.getBookingById(id);
     }
+
+
 //
 //    @PutMapping("/{id}")
 //    public ResponseEntity<Booking> updateBooking(@PathVariable Long id, @RequestBody BookingRequest bookingRequest) {

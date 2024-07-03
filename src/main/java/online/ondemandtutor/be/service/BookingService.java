@@ -140,6 +140,7 @@ public class BookingService {
         return bookingRepository.findBookingById(id);
     }
 
+
     // update booking dựa trên booking request và id
 //    public Booking updateBooking(Long id, BookingRequest bookingRequest) {
 //        Booking optionalBooking = bookingRepository.findBookingById(id);
