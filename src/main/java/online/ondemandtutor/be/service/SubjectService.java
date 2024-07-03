@@ -4,6 +4,7 @@ import online.ondemandtutor.be.api.AccountAPI;
 import online.ondemandtutor.be.entity.*;
 import online.ondemandtutor.be.enums.RequestStatus;
 import online.ondemandtutor.be.enums.RoleEnum;
+import online.ondemandtutor.be.enums.StatusEnum;
 import online.ondemandtutor.be.exception.BadRequestException;
 import online.ondemandtutor.be.model.DayAndSlotRequest;
 import online.ondemandtutor.be.model.EmailDetail;
@@ -109,8 +110,16 @@ public class SubjectService {
 
 
 
-    public void subjectRegister(SubjectRegisterRequest request) {
+    public Account subjectRegister(SubjectRegisterRequest request) {
         Account account = authenticationRepository.findAccountById(request.getAccountId());
+        if(account != null) {
+            if (account.getSubjectRegistrationStatus() == RequestStatus.PENDING) {
+                throw new BadRequestException("Your registration is already in pending status!");
+            }
+            if (account.getSubjectRegistrationStatus() == RequestStatus.APPROVED){
+                throw new BadRequestException("Your registration had been approved!");
+            }
+        }
 
         EducationLevel eduLv = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
 
@@ -145,6 +154,8 @@ public class SubjectService {
         account.setGrades(gradeList);
 
 
+
+
         ArrayList<Subject> subjectList = new ArrayList<>();
 //        List<Account> accounts = new ArrayList<>();
         for(Long findId : request.getGradeIds()){
@@ -162,10 +173,8 @@ public class SubjectService {
         tutorVideo.setUrl(request.getTutorVideoUrl());
         tutorVideo.setAccount(account);
 //        account.getTutorVideos().add(tutorVideo);
-        tutorVideoRepository.save(tutorVideo);
 
         account.setBrief(request.getBrief());
-
 
         for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
             for (Long slotId : dayAndSlot.getTeachingSlotIds()){
@@ -179,18 +188,21 @@ public class SubjectService {
                     scheduleRecord.setTeachingSlot(teachingSlot);
                     lists.add(account);
                     scheduleRecord.setAccount(lists);
+                    // bi vòng lặp
                     scheduleRecordRepository.save(scheduleRecord);
                 }else{
                     lists = scheduleRecord.getAccount();
                     scheduleRecord.setAccount(lists);
+                    // bi vòng lặp
                     scheduleRecordRepository.save(scheduleRecord);
                 }
             }
         }
         tutorVideoRepository.save(tutorVideo);
-        authenticationRepository.save(account);
-        pendingAccount(account);
-        SendSubjectRegistrationToModerator(account);
+        Account newRegister = authenticationRepository.save(account);
+        pendingAccount(newRegister);
+        SendSubjectRegistrationToModerator(newRegister);
+        return newRegister;
     }
 
     public Account pendingAccount (Account id){
@@ -289,88 +301,127 @@ public class SubjectService {
         return authenticationRepository.findAccountsBySubjectRegistrationStatus(RequestStatus.APPROVED);
     }
 
-
-    public void updateSubjectRegister(SubjectRegisterRequest request) {
-        EducationLevel eduLv = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
-        Account account = authenticationRepository.findAccountById(request.getAccountId());
-        account.setEducationLevel(eduLv);
-
-
-//        List<Location> locations = locationRepository.findAllById(request.getLocationIds());
-//        account.setLocations(locations);
-
-
-        ArrayList<Location> locationList = new ArrayList<>();
-        List<Account> accounts = new ArrayList<>();
-        for(Long findId : request.getLocationIds()){
-            Location location = locationRepository.findLocationById(findId);
-            locationList.add(location);
-            accounts = location.getAccount();
-            accounts.add(account);
-            location.setAccount(accounts);
+public Account updateSubjectRegister(SubjectRegisterRequest request) {
+    // Fetch the existing Account entity
+    Account account = authenticationRepository.findAccountById(request.getAccountId());
+    if(account != null){
+        if (account.getSubjectRegistrationStatus() == RequestStatus.PENDING) {
+            throw new BadRequestException("Your registration is already in pending status!");
         }
-        account.setLocations(locationList);
+    }
+
+    // Remove existing associations for Subjects
+    for (Subject subject : account.getSubjects()) {
+        subject.getAccount().remove(account);
+        subjectRepository.save(subject);
+    }
+    account.getSubjects().clear();
+
+    // Remove existing associations for Locations
+    for (Location location : account.getLocations()) {
+        location.getAccount().remove(account);
+        locationRepository.save(location);
+    }
+    account.getLocations().clear();
+
+    // Remove existing associations for Grades
+    for (Grade grade : account.getGrades()) {
+        grade.getAccount().remove(account);
+        gradeRepository.save(grade);
+    }
+    account.getGrades().clear();
+
+    // Remove existing ScheduleRecords
+    List<ScheduleRecord> existingScheduleRecords = scheduleRecordRepository.findAllByAccount(account);
+    for (ScheduleRecord scheduleRecord : existingScheduleRecords) {
+        scheduleRecord.getAccount().remove(account);
+        scheduleRecordRepository.save(scheduleRecord);
+    }
+    scheduleRecordRepository.deleteAll(existingScheduleRecords);  // Delete the records
+
+    // Save to update the database
+    authenticationRepository.save(account);
+
+    // Update the EducationLevel of the account
+    EducationLevel eduLv = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
+    account.setEducationLevel(eduLv);
+    authenticationRepository.save(account);
+
+    ArrayList<Location> locationList = new ArrayList<>();
+    List<Account> accounts = new ArrayList<>();
+    for(Long findId : request.getLocationIds()){
+        Location location = locationRepository.findLocationById(findId);
+        locationList.add(location);
+        accounts = location.getAccount();
+        accounts.add(account);
+        location.setAccount(accounts);
+    }
+    account.setLocations(locationList);
 
 
-        ArrayList<Grade> gradeList = new ArrayList<>();
+    ArrayList<Grade> gradeList = new ArrayList<>();
 //        List<Account> accounts = new ArrayList<>();
-        for(Long findId : request.getGradeIds()){
-            Grade grade = gradeRepository.findGradeById(findId);
-            gradeList.add(grade);
-            accounts = grade.getAccount();
-            accounts.add(account);
-            grade.setAccount(accounts);
-        }
-        account.setGrades(gradeList);
+    for(Long findId : request.getGradeIds()){
+        Grade grade = gradeRepository.findGradeById(findId);
+        gradeList.add(grade);
+        accounts = grade.getAccount();
+        accounts.add(account);
+        grade.setAccount(accounts);
+    }
+    account.setGrades(gradeList);
 
 
-        ArrayList<Subject> subjectList = new ArrayList<>();
+
+
+    ArrayList<Subject> subjectList = new ArrayList<>();
 //        List<Account> accounts = new ArrayList<>();
-        for(Long findId : request.getGradeIds()){
-            Subject subject = subjectRepository.findSubjectById(findId);
-            subjectList.add(subject);
-            accounts = subject.getAccount();
-            accounts.add(account);
-            subject.setAccount(accounts);
-        }
-        account.setGrades(gradeList);
+    for(Long findId : request.getGradeIds()){
+        Subject subject = subjectRepository.findSubjectById(findId);
+        subjectList.add(subject);
+        accounts = subject.getAccount();
+        accounts.add(account);
+        subject.setAccount(accounts);
+    }
+    account.setGrades(gradeList);
 
 
 
-        TutorVideo tutorVideo = new TutorVideo();
-        tutorVideo.setUrl(request.getTutorVideoUrl());
-        tutorVideo.setAccount(account);
-//        account.getTutorVideos().add(tutorVideo);
+    // Update the TutorVideo of the account
+    TutorVideo tutorVideo = tutorVideoRepository.findVideoUrlByAccount(account);
+    tutorVideo.setAccount(account);
+    tutorVideo.setUrl(request.getTutorVideoUrl());
 
+    account.setBrief(request.getBrief());
 
-        account.setBrief(request.getBrief());
-
-
-        for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
-            for (Long slotId : dayAndSlot.getTeachingSlotIds()){
-                ScheduleRecord scheduleRecord =  scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(),slotId);
-                List<Account> lists = new ArrayList<>();
-                if(scheduleRecord == null){
-                    scheduleRecord = new ScheduleRecord();
-                    WeekDay weekDay =  weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
-                    TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
-                    scheduleRecord.setWeekDay(weekDay);
-                    scheduleRecord.setTeachingSlot(teachingSlot);
-                    lists.add(account);
-                    scheduleRecord.setAccount(lists);
-                    scheduleRecordRepository.save(scheduleRecord);
-                }else{
-                    lists = scheduleRecord.getAccount();
-                    scheduleRecord.setAccount(lists);
-                    scheduleRecordRepository.save(scheduleRecord);
-                }
+    for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
+        for (Long slotId : dayAndSlot.getTeachingSlotIds()){
+            ScheduleRecord scheduleRecord =  scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(),slotId);
+            List<Account> lists = new ArrayList<>();
+            if(scheduleRecord == null){
+                scheduleRecord = new ScheduleRecord();
+                WeekDay weekDay =  weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
+                TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
+                scheduleRecord.setWeekDay(weekDay);
+                scheduleRecord.setTeachingSlot(teachingSlot);
+                lists.add(account);
+                scheduleRecord.setAccount(lists);
+                // bi vòng lặp
+                scheduleRecordRepository.save(scheduleRecord);
+            }else{
+                lists = scheduleRecord.getAccount();
+                scheduleRecord.setAccount(lists);
+                // bi vòng lặp
+                scheduleRecordRepository.save(scheduleRecord);
             }
         }
-        tutorVideoRepository.save(tutorVideo);
-        authenticationRepository.save(account);
-        pendingAccount(account);
-        SendSubjectRegistrationToModerator(account);
     }
+    tutorVideoRepository.save(tutorVideo);
+    Account newRegister = authenticationRepository.save(account);
+    pendingAccount(newRegister);
+    SendSubjectRegistrationToModerator(newRegister);
+    return newRegister;
+}
+
 
 
 }

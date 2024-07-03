@@ -8,7 +8,7 @@ import online.ondemandtutor.be.exception.AuthException;
 import online.ondemandtutor.be.exception.BadRequestException;
 import online.ondemandtutor.be.model.*;
 import online.ondemandtutor.be.repository.AuthenticationRepository;
-import online.ondemandtutor.be.repository.WalletRepository;
+//import online.ondemandtutor.be.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,14 +38,14 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     EmailService emailService;
-    @Autowired
-    private WalletRepository walletRepository;
+//    @Autowired
+//    private WalletRepository walletRepository;
 
     public Account register(RegisterRequest registerRequest){
         //test only
         Account existingAccount = authenticationRepository.findAccountByEmail(registerRequest.getEmail());
         if (existingAccount != null) {
-            throw new RuntimeException("Email already in use");
+            throw new BadRequestException("Email already in use");
         }
 
         Account account = new Account();

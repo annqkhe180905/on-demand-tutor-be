@@ -64,8 +64,8 @@ public class SubjectAPI {
     @PostMapping("/approved-subject-registration")
     @PreAuthorize("hasAuthority('MODERATOR')")
 
-    public void approvedSubjectRegistration(@RequestBody UpRoleRequestByAccountId id){
-        subjectService.ApprovedSubject(id);
+    public ResponseEntity approvedSubjectRegistration(@RequestBody UpRoleRequestByAccountId id){
+        return ResponseEntity.ok(subjectService.ApprovedSubject(id));
     }
 
     @PostMapping("/rejected-subject-registration")
@@ -88,8 +88,8 @@ public class SubjectAPI {
     }
 
     @PutMapping("/subject/register-for-tutor")
-    public void updateSubjectRegister(@RequestBody SubjectRegisterRequest request) {
-        subjectService.updateSubjectRegister(request);
+    public ResponseEntity updateSubjectRegister(@RequestBody SubjectRegisterRequest request) {
+        return ResponseEntity.ok(subjectService.updateSubjectRegister(request));
     }
 
 

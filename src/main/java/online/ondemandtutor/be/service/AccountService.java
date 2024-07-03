@@ -38,14 +38,14 @@ public class AccountService {
         Account account = authenticationService.getCurrentAccount();
 
         if(account != null){
+            if (account.getRequestStatus() == StatusEnum.PENDING) {
+                throw new BadRequestException("Your request is pending!");
+            }
 
             TutorCertificate certificate = new TutorCertificate();
             certificate.setUrl(upRoleRequest.getCertificateUrl());
             certificate.setAccount(account);
 
-            if (account.getRequestStatus() == StatusEnum.PENDING) {
-                throw new BadRequestException("Your request is pending!");
-            }
             account.setRequestStatus(StatusEnum.PENDING);
             account.getTutorCertificates().add(certificate);
             SendUpRoleRegistrationToModerator(account);
