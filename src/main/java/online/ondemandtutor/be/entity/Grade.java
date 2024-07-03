@@ -23,5 +23,4 @@ public class Grade {
             )
     @JsonIgnore
     List<Account> account;
-
 }

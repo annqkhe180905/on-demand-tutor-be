@@ -4,5 +4,7 @@ public enum StatusEnum {
     PENDING,
     APPROVED,
     REJECTED,
-    COMPLETED
+    COMPLETED,
+    ACTIVATED,
+    DEACTIVATED
 }
