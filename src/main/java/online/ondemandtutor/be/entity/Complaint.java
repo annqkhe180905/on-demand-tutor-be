@@ -19,6 +19,12 @@ public class Complaint {
 
     private String content;
 
+    private long receiverId;
+
+    private String nguoiPhanNan;
+
+    private String nguoiBiPhanNan;
+
     @ManyToOne
     @JoinColumn(name = "account_id")
     @JsonIgnore
