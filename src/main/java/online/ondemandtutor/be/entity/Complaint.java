@@ -19,12 +19,18 @@ public class Complaint {
 
     private String content;
 
+    private long receiverId;
+
+    private String nguoiPhanNan;
+
+    private String nguoiBiPhanNan;
+
     @ManyToOne
     @JoinColumn(name = "account_id")
     @JsonIgnore
     Account account;
-    @OneToOne
-    @JoinColumn(name = "booking_id", referencedColumnName = "id")
-    private Booking booking;
+//    @OneToOne
+//    @JoinColumn(name = "booking_id", referencedColumnName = "id")
+//    private Booking booking;
 
 }
