@@ -1,7 +1,11 @@
 package online.ondemandtutor.be.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import online.ondemandtutor.be.enums.RequestStatus;
 import online.ondemandtutor.be.enums.RoleEnum;
 import online.ondemandtutor.be.enums.StatusEnum;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,14 +44,20 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     RoleEnum role;
 
+    @Enumerated(EnumType.STRING)
+    RequestStatus subjectRegistrationStatus;
+
     //setAvatar cho user, up certificate và video cho tutor
 
+    @Column(length = 1000)
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<TutorCertificate> tutorCertificates = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "account")
+    @Column(length = 1000)
     List<TutorVideo> tutorVideos;
+
 
     @OneToMany(mappedBy = "account")
     List<Complaint> complaints;
@@ -55,24 +65,48 @@ public class Account implements UserDetails {
     @OneToMany(mappedBy = "account")
     List<Review> reviews;
 
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tutor_schedule_id", referencedColumnName = "id")
-    TutorSchedule tutorSchedules;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "subject_register_id", referencedColumnName = "id")
-    SubjectRegister subjectRegister;
-
-    @OneToMany(mappedBy = "account")
+    @ManyToMany(mappedBy = "account",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     List<ScheduleRecord> scheduleRecords;
 
     //test case
     public Account(String email, String password, String fullname,String phone, RoleEnum role, boolean isDeleted) {
     }
 
-//    @OneToMany(mappedBy = "account")
-//    List<Subject> subjects;
+    //////////
+
+    @ManyToMany(mappedBy = "account")
+    List<Subject> subjects;
+
+    @ManyToMany(mappedBy = "account")
+    List<Location> locations;
+
+    @ManyToMany(mappedBy = "account")
+    List<Grade> grades;
+
+    @ManyToOne
+    @JoinColumn(name = "education_level_id")
+    EducationLevel educationLevel;
+
+    @Column(length = 500)
+    private String brief;
+
+    //////////
+
+    @ManyToMany(mappedBy = "tutors")
+    private List<Booking> tutorBookings;
+    @ManyToMany(mappedBy = "students")
+    private List<Booking> studentBookings;
+
+    //////////
+
+//    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private Wallet wallet;
+
+    //////////
+
+
+    //////////
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

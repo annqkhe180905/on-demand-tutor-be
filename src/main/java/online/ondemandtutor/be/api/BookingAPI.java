@@ -24,6 +24,7 @@ public class BookingAPI {
         return ResponseEntity.ok(booking);
     }
 
+
     @PutMapping("/booking")
     public ResponseEntity updateBooking(@RequestBody BookingRequest bookingRequest) {
         Booking booking = bookingService.updateBooking(bookingRequest);
@@ -61,4 +62,5 @@ public class BookingAPI {
 //            return ResponseEntity.notFound().build();
 //        }
 //    }
+
 }

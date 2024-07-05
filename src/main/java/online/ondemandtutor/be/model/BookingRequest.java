@@ -7,15 +7,11 @@ import online.ondemandtutor.be.entity.Booking;
 
 import java.util.List;
 
+
 @Getter
 @Setter
 public class BookingRequest {
     private Long tutorId;
-//    private Long literacy;
-//    private List<Long> desiredTutoringLocation;
-//    private List<Long> classTaught;
-//    private List<Long> subjectTaught;
-//    private String brief;
 
 //    public Booking toBooking() {
 //        Booking booking = new Booking();
@@ -28,5 +24,6 @@ public class BookingRequest {
 //        booking.setStatus("OK");
 //        return booking;
 //    }
+
 
 }

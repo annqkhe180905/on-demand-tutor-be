@@ -11,8 +11,7 @@ public class SubjectRegisterRequest {
     List<Long> subjectIds;
     List<Long> gradeIds;
     String TutorVideoUrl;
-    List<Long> weekDayIds;
-    List<Long> teachingSlotIds;
+    List<DayAndSlotRequest> dayAndSlotRequests;
     Long accountId;
     String brief;
 }

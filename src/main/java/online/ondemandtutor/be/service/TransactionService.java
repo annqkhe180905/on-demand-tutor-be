@@ -1,47 +1,86 @@
 package online.ondemandtutor.be.service;
 
+import online.ondemandtutor.be.entity.Account;
+import online.ondemandtutor.be.entity.Transaction;
+import online.ondemandtutor.be.entity.Wallet;
+import online.ondemandtutor.be.model.TransactionResponse;
+import online.ondemandtutor.be.repository.TransactionRepository;
+import online.ondemandtutor.be.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import online.ondemandtutor.be.entity.Transaction;
-import online.ondemandtutor.be.entity.Account;
-import online.ondemandtutor.be.repository.TransactionRepository;
-import online.ondemandtutor.be.repository.AuthenticationRepository;
-import online.ondemandtutor.be.model.TransactionRequest;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
-    @Autowired
-    static TransactionRepository transactionRepository;
 
     @Autowired
-    AuthenticationRepository authenticationRepository;
+    AuthenticationService authenticationService;
 
     @Autowired
-    static AuthenticationService authenticationService;
+    TransactionRepository transactionRepository;
 
-    public static Transaction createTransaction(TransactionRequest transactionRequest) {
-        Account student = authenticationService.getCurrentAccount();
-        Account tutor = AuthenticationRepository.findAccountById(Long.valueOf(transactionRequest.getTutorId()));
+    @Autowired
+    WalletRepository walletRepository;
 
-        // check student
-        if (student == null) {
-            throw new RuntimeException("Student not found with current account");
+
+    public List<TransactionResponse> getTransactionById() {
+        List<TransactionResponse> listTransactionResponse = new ArrayList<>();
+        Account account = authenticationService.getCurrentAccount();
+        Wallet wallet = walletRepository.findWalletByAccountId(account.getId());
+        List<Transaction> transactions = transactionRepository.findTransactionsByFrom_IdOrTo_Id(wallet.getId());
+        for (Transaction transaction : transactions) {
+            TransactionResponse transactionResponse = new TransactionResponse();
+            transactionResponse.setTransactionID(transaction.getId());
+            transactionResponse.setTransactionType(transaction.getTransactionType());
+            transactionResponse.setAmount(transaction.getAmount());
+            transactionResponse.setDescription(transaction.getDescription());
+            transactionResponse.setTransactionDate(transaction.getTransactionDate());
+            transactionResponse.setFrom(transaction.getFrom());
+            transactionResponse.setTo(transaction.getTo());
+            if(transaction.getFrom() != null){
+                transactionResponse.setUserFrom(transaction.getFrom().getAccount());
+            }
+            if(transaction.getTo() != null){
+                transactionResponse.setUserTo(transaction.getTo().getAccount());
+            }
+            listTransactionResponse.add(transactionResponse);
         }
+        listTransactionResponse = listTransactionResponse.stream()
+                .sorted(Comparator.comparing(TransactionResponse::getTransactionDate).reversed())
+                .collect(Collectors.toList());
 
-        // check tutor
-        if (tutor == null) {
-            throw new RuntimeException("Tutor not found with id " + transactionRequest.getTutorId());
-        }
-
-        // Tạo đối tượng Transaction
-        Transaction transaction = new Transaction();
-        transaction.setTransactionId(transactionRequest.getTransactionId());
-        transaction.setStudentId(String.valueOf(student.getId()));
-        transaction.setTutorId(String.valueOf(tutor.getId()));
-        transaction.setBookingId(transactionRequest.getBookingId());
-        transaction.setAmount(transactionRequest.getAmount());
-
-        // save Transaction vào db
-        return transactionRepository.save(transaction);
+        return listTransactionResponse;
     }
+
+    public List<TransactionResponse> allTransactions() {
+        List<TransactionResponse> listTransactionResponseDTO = new ArrayList<>();
+        List<Transaction> transactions = transactionRepository.findAll();
+        for (Transaction transaction : transactions) {
+            TransactionResponse transactionResponseDTO = new TransactionResponse();
+            transactionResponseDTO.setTransactionID(transaction.getId());
+            transactionResponseDTO.setTransactionType(transaction.getTransactionType());
+            transactionResponseDTO.setAmount(transaction.getAmount());
+            transactionResponseDTO.setDescription(transaction.getDescription());
+            transactionResponseDTO.setTransactionDate(transaction.getTransactionDate());
+            transactionResponseDTO.setFrom(transaction.getFrom());
+            transactionResponseDTO.setTo(transaction.getTo());
+            if(transaction.getFrom() != null){
+                transactionResponseDTO.setUserFrom(transaction.getFrom().getAccount());
+            }
+            if(transaction.getTo() != null){
+                transactionResponseDTO.setUserTo(transaction.getTo().getAccount());
+            }
+            listTransactionResponseDTO.add(transactionResponseDTO);
+        }
+        listTransactionResponseDTO = listTransactionResponseDTO.stream()
+                .sorted(Comparator.comparing(TransactionResponse::getTransactionDate).reversed())
+                .collect(Collectors.toList());
+
+        return listTransactionResponseDTO;
+    }
+
 }

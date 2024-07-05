@@ -1,10 +1,9 @@
 package online.ondemandtutor.be.enums;
 
-public enum StatusEnum {
+public enum RequestStatus {
     PENDING,
     APPROVED,
     REJECTED,
-    COMPLETED,
-    ACTIVATED,
-    DEACTIVATED
+    ACTIVE,
+    DEACTIVE
 }
