@@ -15,22 +15,15 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "created_at", columnDefinition = "datetime(6)")
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private int score;
-
-    @Column
     private String content;
+    private LocalDateTime createdAt;
+    private float score;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
-    @JsonIgnore
-    Account account;
+    @JoinColumn(name = "tutor_id")
+    private Account tutor;
 
-//    @OneToOne
-//    @JoinColumn(name = "booking_id", referencedColumnName = "id")
-//    private Booking booking;
-
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Account student;
 }
