@@ -54,7 +54,6 @@ public class Filter extends OncePerRequestFilter {
             "/api/teaching-slots",
             "/api/grade",
             "/api/approved-registration"
-
     );
 
     private boolean isPermitted(String uri, String method) {

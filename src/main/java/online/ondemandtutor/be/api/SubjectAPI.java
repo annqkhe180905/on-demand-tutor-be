@@ -4,8 +4,7 @@ package online.ondemandtutor.be.api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import online.ondemandtutor.be.entity.Account;
 import online.ondemandtutor.be.entity.Subject;
-import online.ondemandtutor.be.model.SubjectRegisterRequest;
-import online.ondemandtutor.be.model.UpRoleRequestByAccountId;
+import online.ondemandtutor.be.model.request.*;
 import online.ondemandtutor.be.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -91,6 +90,4 @@ public class SubjectAPI {
     public ResponseEntity updateSubjectRegister(@RequestBody SubjectRegisterRequest request) {
         return ResponseEntity.ok(subjectService.updateSubjectRegister(request));
     }
-
-
 }

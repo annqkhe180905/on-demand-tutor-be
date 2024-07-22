@@ -18,6 +18,4 @@ public class TeachingSlot {
     @JsonIgnore
     @OneToMany(mappedBy = "teachingSlot")
     List<ScheduleRecord> scheduleRecords;
-
-
 }

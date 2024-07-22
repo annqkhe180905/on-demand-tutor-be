@@ -190,6 +190,8 @@
 //
 //    private MockMvc mockMvc;
 //
+//    private LoginRequest loginRequest;
+//
 //    ObjectMapper objectMapper = new ObjectMapper();
 //    ObjectWriter objectWriter = objectMapper.writer();
 //
@@ -207,7 +209,9 @@
 //    @Test
 //    public void testLogin_Successful() {
 //        // chuan bi thong tin de login
-//        LoginRequest loginRequest = new LoginRequest("tet@yahoo.com", "password");
+//        LoginRequest loginRequest = new LoginRequest();
+//        loginRequest.setEmail("tet@yahoo.com");
+//        loginRequest.setPassword("password");
 //        // doi tuong Account dc gia lap de? mock
 //        Account mockAccount = new Account("tet@yahoo.com", "password", "Nguyen Quang Khanh An", "1234567890", RoleEnum.STUDENT, false);
 //
@@ -248,7 +252,9 @@
 //    @Test
 //    public void testLogin_AccountDeleted() {
 //        // chuan bi thong tin de login
-//        LoginRequest loginRequest = new LoginRequest("deleted@yahoo.com", "password");
+//        LoginRequest loginRequest = new LoginRequest();
+//        loginRequest.setEmail("deleted@yahoo.com");
+//        loginRequest.setPassword("password");
 //        // thiet lap rang account da bi deleted
 //        Account deletedAccount = new Account();
 //        deletedAccount.setDeleted(true);
@@ -270,21 +276,26 @@
 //
 //    @Test
 //    public void testLogin_InvalidCredentials() {
-//        // chuan bi thong tin de login
-//        LoginRequest loginRequest = new LoginRequest("notexisted@yahoo.com", "password");
-//        // thiet lap rang account khong co trong he thong db
+//        // Arrange
+//        LoginRequest loginRequest = new LoginRequest();
+//        loginRequest.setEmail("notexisted@yahoo.com");
+//        loginRequest.setPassword("password");
+//
+//        // Mock behavior to return null, simulating no account found
 //        when(authenticationRepository.findAccountByEmail(loginRequest.getEmail())).thenReturn(null);
 //
-//        // vi tai khoan khong ton tai truoc day trong db
-//        // method nay nem ra 1 ngoai le exception
+//        // Act & Assert
 //        AuthException exception = assertThrows(AuthException.class, () -> {
 //            authenticationService.login(loginRequest);
 //        });
+//
+//        // Verify exception message
 //        assertEquals("Email or password is not correct!", exception.getMessage());
 //
-//        //kiem tra phuong thuc findAccountByEmail cua authenticationRepository co dc goi dung voi email tuong ung k
+//        // Verify repository interaction
 //        verify(authenticationRepository).findAccountByEmail(loginRequest.getEmail());
-//        //dam bao khong co tuong tac nao voi token
+//
+//        // Ensure no interaction with token service
 //        verifyNoInteractions(tokenService);
 //    }
 //
@@ -293,7 +304,10 @@
 //        String invalidEmail = " invalid_email";
 //        assertFalse(loginValidation.isValidUsername(invalidEmail));
 //
-//        LoginRequest loginRequest = new LoginRequest(invalidEmail, "password");
+//        LoginRequest loginRequest = new LoginRequest();
+//
+//        loginRequest.setEmail(invalidEmail);
+//        loginRequest.setPassword("password");
 //
 //        Exception exception = assertThrows(Exception.class, () -> {
 //            authenticationService.login(loginRequest);
@@ -305,6 +319,21 @@
 //    }
 //
 //    @Test
+//    public void testLogin_InvalidPassword() {
+//        String validEmail = "annqkhe180905@fpt.edu.vn";
+//        String invalidPassword = "short";
+//        assertFalse(loginValidation.isValidPassword(invalidPassword));
+//
+//        LoginRequest loginRequest = new LoginRequest();
+//        loginRequest.setEmail(validEmail);
+//        loginRequest.setPassword(invalidPassword);
+//
+//        Exception exception = assertThrows(Exception.class, () -> {
+//            authenticationService.login(loginRequest);
+//        });
+//    }
+//
+////    @Test
 ////    public void testLogin_ValidEmail() {
 ////        String validEmail = "annqk@fpt.edu.vn";
 ////        //assertFalse kiem tra dieu kien co thoa man hay khong
@@ -347,22 +376,11 @@
 ////        verify(tokenService).generateToken(mockAccount);
 ////    }
 //
-//    @Test
-//    public void testLogin_InvalidPassword() {
-//        String validEmail = "annqkhe180905@fpt.edu.vn";
-//        String invalidPassword = "short";
-//        assertFalse(loginValidation.isValidPassword(invalidPassword));
 //
-//        LoginRequest loginRequest = new LoginRequest(validEmail, invalidPassword);
-//
-//        Exception exception = assertThrows(Exception.class, () -> {
-//            authenticationService.login(loginRequest);
-//        });
 //
 ////        verifyNoInteractions(authenticationManager);
 ////        verifyNoInteractions(authenticationRepository);
 ////        verifyNoInteractions(tokenService);
-//    }
 //
 ////    @Test
 ////    public void testLogin_ValidPassword() {

@@ -20,11 +20,6 @@ public class Subject {
     @JsonIgnore
     Category category;
 
-//    @ManyToOne
-//    @JoinColumn(name = "tutorSchedule_id")
-//    @JsonIgnore
-//    private TutorSchedule tutorSchedule;
-
     @ManyToMany
     @JoinTable
             (

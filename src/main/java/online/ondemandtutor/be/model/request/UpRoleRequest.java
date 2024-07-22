@@ -1,8 +1,6 @@
-package online.ondemandtutor.be.model;
+package online.ondemandtutor.be.model.request;
 
 import lombok.Data;
-import online.ondemandtutor.be.entity.Account;
-import online.ondemandtutor.be.enums.RoleEnum;
 import online.ondemandtutor.be.enums.StatusEnum;
 
 @Data

@@ -1,6 +1,6 @@
 package online.ondemandtutor.be.enums;
 
-public enum StatusEnum {
+public enum ComplaintEnum {
     PENDING,
     APPROVED,
     REJECTED

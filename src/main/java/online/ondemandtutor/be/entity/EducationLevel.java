@@ -20,6 +20,4 @@ public class EducationLevel {
     @OneToMany(mappedBy = "educationLevel")
     @JsonIgnore
     List<Account> account;
-
-
 }

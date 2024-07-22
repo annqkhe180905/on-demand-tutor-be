@@ -1,17 +1,18 @@
 package online.ondemandtutor.be.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import online.ondemandtutor.be.enums.MonthlyPackageEnum;
 import online.ondemandtutor.be.enums.RequestStatus;
 import online.ondemandtutor.be.enums.RoleEnum;
 import online.ondemandtutor.be.enums.StatusEnum;
+import online.ondemandtutor.be.service.DateService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,29 +48,25 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     RequestStatus subjectRegistrationStatus;
 
-    //setAvatar cho user, up certificate và video cho tutor
+    @Enumerated(EnumType.STRING)
+    MonthlyPackageEnum monthlyPackage = MonthlyPackageEnum.DEACTIVATED;
+
+    ////////////////
 
     @Column(length = 1000)
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<TutorCertificate> tutorCertificates = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "account")
     @Column(length = 1000)
     List<TutorVideo> tutorVideos;
 
-    @OneToMany(mappedBy = "account")
-    List<Complaint> complaints;
-
-    @OneToMany(mappedBy = "account")
-    List<Review> reviews;
+    ////////////////
+    @OneToMany(mappedBy = "fromStudent")
+    List<Complaint> complaintSender;
 
     @ManyToMany(mappedBy = "account",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     List<ScheduleRecord> scheduleRecords;
-
-    //test case
-    public Account(String email, String password, String fullname,String phone, RoleEnum role, boolean isDeleted) {
-    }
 
     //////////
 
@@ -91,19 +88,32 @@ public class Account implements UserDetails {
 
     //////////
 
-    @ManyToMany(mappedBy = "tutors")
+    @OneToMany(mappedBy = "tutor")
     private List<Booking> tutorBookings;
-    @ManyToMany(mappedBy = "students")
+
+    @OneToMany(mappedBy = "student")
     private List<Booking> studentBookings;
 
+    @OneToMany(mappedBy = "tutor")
+    private List<Review> tutorGotReview;
+
+    @OneToMany(mappedBy = "student")
+    private List<Review> studentReview;
+
     //////////
 
-//    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private Wallet wallet;
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Wallet wallet;
 
     //////////
 
+    //monthly package
+    private LocalDateTime nextPaymentDate;
+//    @PrePersist
+//    protected void onCreate() {
+//        nextPaymentDate = DateService.getCurrentLocalDateTime();
+//    }
 
     //////////
 
@@ -136,6 +146,4 @@ public class Account implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-
 }

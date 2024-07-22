@@ -1,15 +1,17 @@
-package online.ondemandtutor.be.model;
+package online.ondemandtutor.be.model.request;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class RegistrationForBothUpRoleAndSubjectRequest {
+public class SubjectRegisterRequest {
     Long educationLevelId;
     List<Long> locationIds;
     List<Long> subjectIds;
+    List<Long> gradeIds;
     String TutorVideoUrl;
+    List<DayAndSlotRequest> dayAndSlotRequests;
+    Long accountId;
     String brief;
-//    TutorSchedule schedule;
 }

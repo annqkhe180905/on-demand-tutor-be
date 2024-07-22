@@ -32,5 +32,4 @@ public interface AuthenticationRepository extends JpaRepository<Account, Long> {
     List<Account> findAccountsBySubjectRegistrationStatus(RequestStatus statusEnum);
 
     Account findAccountByIdAndRole (Long id, RoleEnum role);
-
 }

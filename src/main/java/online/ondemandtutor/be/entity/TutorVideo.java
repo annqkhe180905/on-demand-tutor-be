@@ -25,5 +25,4 @@ public class TutorVideo {
     @JoinColumn(name = "account_id")
     @JsonIgnore
     Account account;
-
 }

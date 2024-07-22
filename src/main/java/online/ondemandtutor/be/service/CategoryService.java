@@ -1,7 +1,7 @@
 package online.ondemandtutor.be.service;
 
 import online.ondemandtutor.be.entity.Category;
-import online.ondemandtutor.be.model.CategoryRequest;
+import online.ondemandtutor.be.model.request.*;
 import online.ondemandtutor.be.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

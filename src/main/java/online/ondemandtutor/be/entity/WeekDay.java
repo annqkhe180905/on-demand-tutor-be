@@ -14,14 +14,7 @@ public class WeekDay {
     Long id;
     String day;
 
-
     @JsonIgnore
     @OneToMany(mappedBy = "weekDay")
     List<ScheduleRecord> scheduleRecords;
-
-
-
-
-
-
 }

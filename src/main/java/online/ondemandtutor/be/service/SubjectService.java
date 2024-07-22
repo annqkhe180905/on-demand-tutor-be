@@ -4,12 +4,9 @@ import online.ondemandtutor.be.api.AccountAPI;
 import online.ondemandtutor.be.entity.*;
 import online.ondemandtutor.be.enums.RequestStatus;
 import online.ondemandtutor.be.enums.RoleEnum;
-import online.ondemandtutor.be.enums.StatusEnum;
 import online.ondemandtutor.be.exception.BadRequestException;
-import online.ondemandtutor.be.model.DayAndSlotRequest;
 import online.ondemandtutor.be.model.EmailDetail;
-import online.ondemandtutor.be.model.SubjectRegisterRequest;
-import online.ondemandtutor.be.model.UpRoleRequestByAccountId;
+import online.ondemandtutor.be.model.request.*;
 import online.ondemandtutor.be.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -121,6 +118,46 @@ public class SubjectService {
             }
         }
 
+        // Remove existing associations for Subjects
+        for (Subject subject : account.getSubjects()) {
+            subject.getAccount().remove(account);
+            subjectRepository.save(subject);
+        }
+        account.getSubjects().clear();
+
+        // Remove existing associations for Locations
+        for (Location location : account.getLocations()) {
+            location.getAccount().remove(account);
+            locationRepository.save(location);
+        }
+        account.getLocations().clear();
+
+        // Remove existing associations for Grades
+        for (Grade grade : account.getGrades()) {
+            grade.getAccount().remove(account);
+            gradeRepository.save(grade);
+        }
+        account.getGrades().clear();
+
+        //Remove existing associations for Video URL
+        List<TutorVideo> tutorVideos = tutorVideoRepository.findByAccountId(account.getId());
+        if(tutorVideos != null) tutorVideoRepository.deleteAll(tutorVideos);
+
+// The changes are automatically saved to the database upon deletion
+
+        // Remove existing ScheduleRecords
+        List<ScheduleRecord> existingScheduleRecords = scheduleRecordRepository.findAllByAccount(account);
+        for (ScheduleRecord scheduleRecord : existingScheduleRecords) {
+            scheduleRecord.getAccount().remove(account);
+            scheduleRecordRepository.save(scheduleRecord);
+        }
+        scheduleRecordRepository.deleteAll(existingScheduleRecords);  // Delete the records
+
+        // Save to update the database
+        authenticationRepository.save(account);
+        // xoa records dang ky nhung bi rejected truoc day
+
+
         EducationLevel eduLv = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
 
         account.setEducationLevel(eduLv);
@@ -167,41 +204,147 @@ public class SubjectService {
         }
         account.setGrades(gradeList);
 
-
-
         TutorVideo tutorVideo = new TutorVideo();
         tutorVideo.setUrl(request.getTutorVideoUrl());
         tutorVideo.setAccount(account);
-//        account.getTutorVideos().add(tutorVideo);
+        account.getTutorVideos().add(tutorVideo);
 
         account.setBrief(request.getBrief());
+//
+//        for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
+//            for (Long slotId : dayAndSlot.getTeachingSlotIds()){
+//                ScheduleRecord scheduleRecord =  scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(),slotId);
+//                List<Account> lists = new ArrayList<>();
+//                if(scheduleRecord != null) {
+//                    scheduleRecord = new ScheduleRecord();
+//                    WeekDay weekDay = weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
+//                    TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
+//                    scheduleRecord.setWeekDay(weekDay);
+//                    scheduleRecord.setTeachingSlot(teachingSlot);
+//                    lists.add(account);
+//                    scheduleRecord.setAccount(lists);
+//                    scheduleRecord.getAccount().add((Account) lists);
+//                    // bi vòng lặp
+//                    scheduleRecordRepository.save(scheduleRecord);
+//                }else{
+////                    scheduleRecord.getAccount().add((Account) lists);
+//                    lists = scheduleRecord.getAccount();
+//                    scheduleRecord.setAccount(scheduleRecord.getAccount());
+//                    // bi vòng lặp
+//                    scheduleRecordRepository.save(scheduleRecord);
+//                }
+//            }
+//
+//        }
 
-        for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
-            for (Long slotId : dayAndSlot.getTeachingSlotIds()){
-                ScheduleRecord scheduleRecord =  scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(),slotId);
-                List<Account> lists = new ArrayList<>();
-                if(scheduleRecord == null){
-                    scheduleRecord = new ScheduleRecord();
-                    WeekDay weekDay =  weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
-                    TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
-                    scheduleRecord.setWeekDay(weekDay);
-                    scheduleRecord.setTeachingSlot(teachingSlot);
-                    lists.add(account);
-                    scheduleRecord.setAccount(lists);
-                    // bi vòng lặp
-                    scheduleRecordRepository.save(scheduleRecord);
-                }else{
-                    lists = scheduleRecord.getAccount();
-                    scheduleRecord.setAccount(lists);
-                    // bi vòng lặp
-                    scheduleRecordRepository.save(scheduleRecord);
-                }
+//        for (DayAndSlotRequest dayAndSlot : request.getDayAndSlotRequests()) {
+//            for (Long slotId : dayAndSlot.getTeachingSlotIds()) {
+//                ScheduleRecord existingScheduleRecord = scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(), slotId);
+//                if (existingScheduleRecord != null) {
+//                    ScheduleRecord newScheduleRecord = new ScheduleRecord();
+//                    newScheduleRecord.setWeekDay(existingScheduleRecord.getWeekDay());
+//                    newScheduleRecord.setTeachingSlot(existingScheduleRecord.getTeachingSlot());
+//                    accounts = new ArrayList<>();
+//                    accounts.add(account);
+//                    newScheduleRecord.setAccount(accounts);
+//                    account.getScheduleRecords().add(newScheduleRecord);
+//                    scheduleRecordRepository.save(newScheduleRecord);
+//                }
+//            }
+//        }
+
+
+//        for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
+//            for (Long slotId : dayAndSlot.getTeachingSlotIds()){
+//                ScheduleRecord scheduleRecord =  scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(),slotId);
+//                List<Account> lists = new ArrayList<>();
+//                if(scheduleRecord == null){
+//                    scheduleRecord = new ScheduleRecord();
+//                    WeekDay weekDay =  weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
+//                    TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
+//                    scheduleRecord.setWeekDay(weekDay);
+//                    scheduleRecord.setTeachingSlot(teachingSlot);
+//                    lists.add(account);
+//                    scheduleRecord.setAccount(lists);
+//                    // bi vòng lặp
+//                    scheduleRecordRepository.save(scheduleRecord);
+//                }else{
+////                    lists = scheduleRecord.getAccount();
+////                    scheduleRecord.setAccount(lists);
+//                    WeekDay weekDay =  weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
+//                    TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
+//                    scheduleRecord.setWeekDay(weekDay);
+//                    scheduleRecord.setTeachingSlot(teachingSlot);
+//                    lists.add(account);
+//                    scheduleRecord.setAccount(lists);
+//                    // bi vòng lặp
+//                    scheduleRecordRepository.save(scheduleRecord);
+//                }
+//            }
+//        }
+        // Revised schedule function within subjectRegister method
+//        for (DayAndSlotRequest dayAndSlot : request.getDayAndSlotRequests()) {
+//            for (Long slotId : dayAndSlot.getTeachingSlotIds()) {
+//                WeekDay weekDay = weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
+//                TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
+//                // Check if a ScheduleRecord already exists to avoid duplicates
+//                ScheduleRecord scheduleRecord = scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(weekDay.getId(), teachingSlot.getId());
+//                if (scheduleRecord == null) {
+//                    scheduleRecord = new ScheduleRecord();
+//                    scheduleRecord.setWeekDay(weekDay);
+//                    scheduleRecord.setTeachingSlot(teachingSlot);
+//                    scheduleRecord.setAccount(new ArrayList<>()); // Initialize the list
+//                }
+//                // Add the account to the schedule record if not already present
+//                if (!scheduleRecord.getAccount().contains(account)) {
+//                    scheduleRecord.setWeekDay(weekDay);
+//                    scheduleRecord.setTeachingSlot(teachingSlot);
+//                    scheduleRecord.setAccount(new ArrayList<>());
+//                }
+//                // Save the schedule record outside the inner loop to reduce database calls
+//            }
+//        }
+
+//        for(DayAndSlotRequest dayAndSlot : request.getDayAndSlotRequests()){
+//            WeekDay weekDay = weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
+//            for(Long slotId : dayAndSlot.getTeachingSlotIds()){
+//                List<Account> lists = new ArrayList<>();
+//                TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
+//                ScheduleRecord scheduleRecord = scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(weekDay.getId(), teachingSlot.getId());
+//
+//                    scheduleRecord = new ScheduleRecord();
+//                    scheduleRecord.setWeekDay(weekDay);
+//                    scheduleRecord.setTeachingSlot(teachingSlot);
+//                    lists.add(account);
+//                    scheduleRecord.setAccount(lists);
+//                    scheduleRecord.getAccount().add(account);
+//                    scheduleRecordRepository.save(scheduleRecord);
+//
+//            }
+//        }
+
+        for (DayAndSlotRequest dayAndSlot : request.getDayAndSlotRequests()) {
+            WeekDay weekDay = weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
+
+            for (Long slotId : dayAndSlot.getTeachingSlotIds()) {
+                TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
+                // Always create a new ScheduleRecord for each DayAndSlotRequest
+                ScheduleRecord scheduleRecord = new ScheduleRecord();
+                scheduleRecord.setWeekDay(weekDay);
+                scheduleRecord.setTeachingSlot(teachingSlot);
+                scheduleRecord.setAccount(new ArrayList<>(List.of(account)));
+
+                // Save the new ScheduleRecord
+                scheduleRecordRepository.save(scheduleRecord);
             }
         }
+
+        scheduleRecordRepository.saveAll(account.getScheduleRecords());
         tutorVideoRepository.save(tutorVideo);
         Account newRegister = authenticationRepository.save(account);
         pendingAccount(newRegister);
         SendSubjectRegistrationToModerator(newRegister);
+
         return newRegister;
     }
 
@@ -228,7 +371,7 @@ public class SubjectService {
             emailDetail.setRecipient(mod.getEmail());
             emailDetail.setSubject("Subject Registration Request for account " + student.getEmail() + "!");
             emailDetail.setMsgBody("");
-            emailDetail.setButtonValue("Lets start to study!");
+            emailDetail.setButtonValue("Let's start to study!");
             emailDetail.setFullName(mod.getFullname());
             // chờ FE gửi link dashboard up role
             emailDetail.setLink("http://localhost:5173/register-request");
@@ -421,7 +564,4 @@ public Account updateSubjectRegister(SubjectRegisterRequest request) {
     SendSubjectRegistrationToModerator(newRegister);
     return newRegister;
 }
-
-
-
 }

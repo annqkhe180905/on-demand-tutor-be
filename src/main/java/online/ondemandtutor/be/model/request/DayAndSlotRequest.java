@@ -1,4 +1,4 @@
-package online.ondemandtutor.be.model;
+package online.ondemandtutor.be.model.request;
 
 
 import lombok.Data;

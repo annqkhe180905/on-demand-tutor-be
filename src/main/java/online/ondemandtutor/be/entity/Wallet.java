@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,12 +19,12 @@ public class Wallet {
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
-    private double balance;
+    private double money;
 
-//    @JsonIgnore
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "user_id", unique = true)
-//    private Account account;
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", unique = true)
+    private Account account;
 
     @JsonIgnore
     @OneToMany(mappedBy = "from", cascade = CascadeType.ALL)
@@ -34,5 +33,4 @@ public class Wallet {
     @JsonIgnore
     @OneToMany(mappedBy = "to", cascade = CascadeType.ALL)
     private Set<Transaction> transactionsTo;
-
 }

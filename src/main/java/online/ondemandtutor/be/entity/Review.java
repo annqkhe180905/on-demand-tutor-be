@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import online.ondemandtutor.be.service.DateService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Setter
@@ -15,22 +18,24 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "created_at", columnDefinition = "datetime(6)")
-    private LocalDateTime createdAt;
+    private LocalDateTime uploadedDate;
 
-    @Column(nullable = false)
-    private int score;
+    @PrePersist
+    protected void onCreate() {
+        uploadedDate = DateService.getCurrentLocalDateTime();
+    }
 
-    @Column
+    private float score;
+
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "tutor_id")
     @JsonIgnore
-    Account account;
+    private Account tutor;
 
-//    @OneToOne
-//    @JoinColumn(name = "booking_id", referencedColumnName = "id")
-//    private Booking booking;
-
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    @JsonIgnore
+    private Account student;
 }

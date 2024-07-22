@@ -2,9 +2,7 @@ package online.ondemandtutor.be.api;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import online.ondemandtutor.be.entity.Account;
-import online.ondemandtutor.be.model.UpRoleRequest;
-import online.ondemandtutor.be.model.UpRoleRequestByAccountId;
-import online.ondemandtutor.be.model.UpdateRequest;
+import online.ondemandtutor.be.model.request.*;
 import online.ondemandtutor.be.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -89,6 +87,11 @@ public class AccountAPI {
     public ResponseEntity changeStatusIsNotDeleted(@PathVariable Long id) {
         Account account = accountService.changeStatusIsNotDeletedByAdmin(id);
         return ResponseEntity.ok(account);
+    }
+
+    @PostMapping("monthly-package")
+    public Account maintainingRoleRequest(@RequestBody MonthlyPackageRequest request) {
+        return accountService.RoleMonthlyPackage(request);
     }
 
 }

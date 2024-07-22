@@ -1,54 +1,53 @@
 package online.ondemandtutor.be.api;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import online.ondemandtutor.be.entity.Review;
-import online.ondemandtutor.be.model.ReviewRequest;
+import online.ondemandtutor.be.model.request.ReviewRequest;
 import online.ondemandtutor.be.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("api")
+@SecurityRequirement(name = "api")
 public class ReviewAPI {
 
     @Autowired
-    private ReviewService reviewService;
+    ReviewService reviewService;
 
-    @GetMapping
+    @PostMapping("/review")
+    public ResponseEntity<Review> createReview(@RequestBody ReviewRequest reviewRequest) {
+        Review review = reviewService.createReview(reviewRequest);
+        return ResponseEntity.ok(review);
+    }
+
+    @GetMapping("/reviews")
     public ResponseEntity<List<Review>> getAllReviews() {
         List<Review> reviews = reviewService.getAllReviews();
         return ResponseEntity.ok(reviews);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Review> getReviewById(@PathVariable long id) {
-        Optional<Review> review = reviewService.getReviewById(id);
-        return review.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    // Method to get a review by review_id
+    @GetMapping("/review/{reviewId}")
+    public ResponseEntity<Review> getReviewById(@PathVariable Long reviewId) {
+        Review review = reviewService.getReviewById(reviewId);
+        return ResponseEntity.ok(review);
     }
 
-    @PostMapping
-    public ResponseEntity<Review> createReview(@RequestBody ReviewRequest reviewRequest) {
-        Review createdReview = reviewService.createReview(reviewRequest);
-        return ResponseEntity.ok(createdReview);
+    // Method to get reviews by tutor_id
+    @GetMapping("/reviews/tutor/{tutorId}")
+    public ResponseEntity<List<Review>> getReviewsByTutorId(@PathVariable Long tutorId) {
+        List<Review> reviews = reviewService.getReviewByTutorId(tutorId);
+        return ResponseEntity.ok(reviews);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable long id, @RequestBody ReviewRequest reviewRequest) {
-        try {
-            Review updatedReview = reviewService.updateReview(id, reviewRequest);
-            return ResponseEntity.ok(updatedReview);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable long id) {
+    @DeleteMapping("/review/{id}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
         reviewService.deleteReview(id);
         return ResponseEntity.noContent().build();
+        // noContent().build() trả về status 204. nghĩa là đã xóa và ko trả về thứ gì
     }
 }

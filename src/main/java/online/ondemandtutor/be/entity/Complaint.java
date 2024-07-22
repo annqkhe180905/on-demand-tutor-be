@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import online.ondemandtutor.be.enums.ComplaintEnum;
+import online.ondemandtutor.be.enums.ComplaintEnum;
+import online.ondemandtutor.be.service.DateService;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Setter
@@ -15,16 +18,22 @@ public class Complaint {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private Date createdAt;
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = DateService.getCurrentLocalDateTime();
+    }
 
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
-    @JsonIgnore
-    Account account;
-//    @OneToOne
-//    @JoinColumn(name = "booking_id", referencedColumnName = "id")
-//    private Booking booking;
+    @JoinColumn(name = "from_student_id")
+            @JsonIgnore
+    Account fromStudent;
 
+    private String tutorEmail;
+
+    @Enumerated(EnumType.STRING)
+    private ComplaintEnum status;
 }

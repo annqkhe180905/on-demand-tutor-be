@@ -2,7 +2,7 @@ package online.ondemandtutor.be.api;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import online.ondemandtutor.be.entity.Category;
-import online.ondemandtutor.be.model.CategoryRequest;
+import online.ondemandtutor.be.model.request.*;
 import online.ondemandtutor.be.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

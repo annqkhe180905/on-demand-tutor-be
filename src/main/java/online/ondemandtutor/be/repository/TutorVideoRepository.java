@@ -13,4 +13,5 @@ public interface TutorVideoRepository extends JpaRepository<TutorVideo, Long> {
     List<TutorVideo> findAll();
     TutorVideo findVideoUrlByAccount (Account account);
 
+    List<TutorVideo> findByAccountId(long id);
 }

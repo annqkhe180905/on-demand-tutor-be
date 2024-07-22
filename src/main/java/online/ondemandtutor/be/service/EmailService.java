@@ -168,4 +168,21 @@ public class EmailService {
             messagingException.printStackTrace();
         }
     }
-}
+
+    public void sendMail(Account account, String subject, String description){
+
+        try{
+            // Creating a simple mail message
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+
+            // Setting up necessary details
+            mimeMessageHelper.setFrom("annqk569@gmail.com");
+            mimeMessageHelper.setTo(account.getEmail());
+            mimeMessageHelper.setText(description);
+            mimeMessageHelper.setSubject(subject);
+            javaMailSender.send(mimeMessage);
+        }catch (MessagingException messagingException){
+            messagingException.printStackTrace();
+        }
+    }}

@@ -25,10 +25,6 @@ public class TutorCertificate {
 
     private LocalDateTime uploadedDate;
 
-    //xoa ngay`
-//    private Date startAt;
-//    private Date endAt;
-
     @PrePersist
     protected void onCreate() {
         uploadedDate = DateService.getCurrentLocalDateTime();
@@ -39,5 +35,4 @@ public class TutorCertificate {
     @JoinColumn(name = "account_id")
     @JsonIgnore
     Account account;
-
 }

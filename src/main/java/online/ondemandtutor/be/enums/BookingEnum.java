@@ -1,7 +1,9 @@
 package online.ondemandtutor.be.enums;
 
-public enum StatusEnum {
+public enum BookingEnum {
     PENDING,
     APPROVED,
-    REJECTED
+    REJECTED,
+    PASSED,
+    FAILED
 }

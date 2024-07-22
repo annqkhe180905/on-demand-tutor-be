@@ -1,19 +1,24 @@
 package online.ondemandtutor.be.service;
 
-import jakarta.transaction.Transactional;
 import online.ondemandtutor.be.entity.Account;
 import online.ondemandtutor.be.entity.TutorCertificate;
+import online.ondemandtutor.be.entity.Wallet;
+import online.ondemandtutor.be.enums.MonthlyPackageEnum;
 import online.ondemandtutor.be.enums.RoleEnum;
 import online.ondemandtutor.be.enums.StatusEnum;
+import online.ondemandtutor.be.enums.TransactionEnum;
 import online.ondemandtutor.be.exception.BadRequestException;
-import online.ondemandtutor.be.model.*;
+import online.ondemandtutor.be.model.EmailDetail;
+import online.ondemandtutor.be.model.request.*;
 import online.ondemandtutor.be.repository.AuthenticationRepository;
 import online.ondemandtutor.be.repository.TutorCertificateRepository;
-import org.hibernate.Hibernate;
+
+import online.ondemandtutor.be.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,14 +28,15 @@ public class AccountService {
     @Autowired
     AuthenticationService authenticationService;
     @Autowired
-    private TokenService tokenService;
-    @Autowired
     private EmailService emailService;
     @Autowired
     private TutorCertificateRepository tutorCertificateRepository;
-
-    //up Role cho registered user -> phai thong qua MOD duyet
-    //  bao gom certificate URL -> gui den mail cho MOD -> APPROVED OR REJECTED
+    @Autowired
+    private WalletService walletService;
+    @Autowired
+    private WalletRepository walletRepository;
+    @Autowired
+    private TransactionService transactionService;
 
     // STUDENT GUI REQUEST KEM` CERTIFICATE
 
@@ -111,7 +117,6 @@ public class AccountService {
     }
     // he thong gui mail thong bao status Up Role Request cho STUDENT sau khi MOD thao tac
     public void SendUpRoleRequestStatusToStudent(Account account, String msg){
-
         //copy tu ForgetPassword
         EmailDetail emailDetail = new EmailDetail();
         emailDetail.setRecipient(account.getEmail());
@@ -134,14 +139,7 @@ public class AccountService {
     // lay danh sach tat ca nhung user dang yeu cau Up Role
     public List<Account> getAllAccountsHaveUpRoleRequest(){
         return authenticationRepository.findAccountByRequestStatus(StatusEnum.PENDING);
-
     }
-
-    ////////////////////////////
-
-
-
-    ////////////////////////////
 
     //lay danh sach tat ca user, bat ke isDeleted
     public List<Account> getAllAccounts(){
@@ -159,19 +157,8 @@ public class AccountService {
 
     public Account updateAccount(UpdateRequest updateRequest) {
         Account account = authenticationService.getCurrentAccount();
-//        if(account != null){
-//            account.setPhone(updateRequest.getPhone());
-//            account.setFullname(updateRequest.getFullname());
-//
-//            Account newAccount = authenticationRepository.save(account);
-//            return newAccount;
-//        }
-//        else {
-//            throw new BadRequestException("Account is not found!");
-//        }
         account.setPhone(updateRequest.getPhone());
         account.setFullname(updateRequest.getFullname());
-
         Account newAccount = authenticationRepository.save(account);
         return newAccount;
     }
@@ -205,5 +192,109 @@ public class AccountService {
     ////lay danh sach tat ca user bi xoa
     public List<Account> getAllAccountsIsNotDeleted() {
         return authenticationRepository.findAccountByIsDeletedFalse();
+    }
+
+    //monthly package
+    private static final double UPGRADE_FEE = 100000;
+
+    public Account RoleMonthlyPackage(MonthlyPackageRequest request){
+        Account account = authenticationRepository.findAccountById(request.getAccountId());
+        if(account != null){
+            if(account.getMonthlyPackage() == MonthlyPackageEnum.ACTIVATED){
+                throw new BadRequestException("You already bought a monthly package!");
+            }
+            Wallet wallet = walletRepository.findWalletByAccountId(account.getId());
+            if (wallet.getMoney() < UPGRADE_FEE) {
+                throw new BadRequestException("Insufficient funds to upgrade.");
+            }
+            // Deduct the upgrade fee
+            wallet.setMoney(wallet.getMoney() - UPGRADE_FEE);
+            walletRepository.save(wallet);
+            // Record the transaction
+            transactionService.createTransaction(wallet, UPGRADE_FEE, TransactionEnum.MONTHLY_PACKAGE);
+            account.setMonthlyPackage(MonthlyPackageEnum.ACTIVATED);
+            account.setNextPaymentDate(LocalDateTime.now().plusMonths(1));
+            sendMonthlyPackageConfirmationToTutor(account, "YOU JUST BOUGHT A MONTHLY PACKAGE!");
+            return authenticationRepository.save(account);
+        }
+        else{
+            throw new BadRequestException("Account is not found!");
+        }
+    }
+    public void sendMonthlyPackageConfirmationToTutor(Account account, String msg){
+        //copy tu ForgetPassword
+        EmailDetail emailDetail = new EmailDetail();
+        emailDetail.setRecipient(account.getEmail());
+        emailDetail.setSubject("Response from PLATFORM for " + account.getEmail() + " MONTHLY PACKAGE!");
+        emailDetail.setMsgBody(msg);
+        // chờ FE gửi web chính thức
+        emailDetail.setButtonValue("Let's create a new subject!");
+        emailDetail.setFullName(account.getFullname());
+        // chờ FE gửi link trang web
+        emailDetail.setLink("http://ondemandtutor.online/login");
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                emailService.sendApprovedUpRoleRequestEmail(emailDetail);
+            }
+        };
+        new Thread(r).start();
+    }
+
+
+    //schedule countdown for role expired date
+    @Scheduled(cron = "0 0 0 * * ?") // Runs daily at midnight
+    public void checkAndNotifyForMaintenancePayments() {
+        List<Account> tutorAccounts = authenticationRepository.findAccountByRole(RoleEnum.TUTOR);
+        for (Account account : tutorAccounts) {
+            if (account.getNextPaymentDate() != null && account.getNextPaymentDate().isBefore(LocalDateTime.now().plusDays(7))) {
+                sendMaintenanceNotification(account);
+            }
+            if (account.getNextPaymentDate() != null && account.getNextPaymentDate().isBefore(LocalDateTime.now())) {
+                processMaintenancePayment(account);
+            }
+        }
+    }
+
+    private void sendMaintenanceNotification(Account account) {
+        String subject = "Upcoming Maintenance Payment";
+        String description = "You need to recharge 100000 VND to maintain your TUTOR role.";
+        walletService.threadSendMail(account, subject, description);
+    }
+
+    private void processMaintenancePayment(Account account) {
+        Wallet wallet = walletRepository.findWalletByAccountId(account.getId());
+        if (wallet.getMoney() < 100000) {
+            account.setRole(RoleEnum.STUDENT);
+            account.setNextPaymentDate(null);
+            authenticationRepository.save(account);
+        } else {
+            wallet.setMoney(wallet.getMoney() - 100000);
+            walletRepository.save(wallet);
+            transactionService.createTransaction(wallet, 100000, TransactionEnum.RECHARGE);
+            account.setNextPaymentDate(LocalDateTime.now().plusMonths(1));
+            authenticationRepository.save(account);
+        }
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?") // Runs daily at midnight
+    public void checkAndNotifyTutorsForUnusedBalance() {
+        List<Account> tutorAccounts = authenticationRepository.findAccountByRole(RoleEnum.TUTOR);
+        for (Account tutor : tutorAccounts) {
+            Wallet wallet = walletRepository.findWalletByAccountId(tutor.getId());
+            boolean hasUnusedBalance = wallet.getMoney() >= UPGRADE_FEE;
+            boolean isMonthlyPackageDeactivated = tutor.getMonthlyPackage() == MonthlyPackageEnum.DEACTIVATED;
+            boolean hasNotPurchasedForOverAMonth = tutor.getNextPaymentDate() == null || tutor.getNextPaymentDate().isBefore(LocalDateTime.now().minusMonths(1));
+
+            if (hasUnusedBalance && isMonthlyPackageDeactivated && hasNotPurchasedForOverAMonth) {
+                sendUnusedBalanceNotification(tutor);
+            }
+        }
+    }
+
+    private void sendUnusedBalanceNotification(Account tutor) {
+        String subject = "Unused Balance Alert";
+        String description = "You have an unused balance in your account. Consider purchasing a monthly package to make the most out of our platform.";
+        walletService.threadSendMail(tutor, subject, description);
     }
 }

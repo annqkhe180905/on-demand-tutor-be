@@ -7,8 +7,9 @@ import online.ondemandtutor.be.enums.RoleEnum;
 import online.ondemandtutor.be.exception.AuthException;
 import online.ondemandtutor.be.exception.BadRequestException;
 import online.ondemandtutor.be.model.*;
+import online.ondemandtutor.be.model.request.*;
 import online.ondemandtutor.be.repository.AuthenticationRepository;
-//import online.ondemandtutor.be.repository.WalletRepository;
+import online.ondemandtutor.be.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,8 +39,8 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     EmailService emailService;
-//    @Autowired
-//    private WalletRepository walletRepository;
+    @Autowired
+    private WalletRepository walletRepository;
 
     public Account register(RegisterRequest registerRequest){
         //test only
@@ -55,12 +56,12 @@ public class AuthenticationService implements UserDetailsService {
         account.setPhone(registerRequest.getPhone());
         account.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 
-//        Wallet wallet = new Wallet();
-//        wallet.setBalance(0);
-//        account.setWallet(wallet);
+        Wallet wallet = new Wallet();
+        wallet.setMoney(0);
+        account.setWallet(wallet);
         Account newAccount = authenticationRepository.save(account); //save to db
-//        wallet.setAccount(account);
-//        walletRepository.save(wallet);
+        wallet.setAccount(account);
+        walletRepository.save(wallet);
         return newAccount;
     }
 
@@ -81,11 +82,8 @@ public class AuthenticationService implements UserDetailsService {
         if (account == null || !passwordEncoder.matches(loginRequest.getPassword(), account.getPassword())) {
             throw new AuthException("Email or password is not correct!");
         }
-
-
         // => account chuẩn
 
-//        Account account = authenticationRepository.findAccountByEmail(loginRequest.getEmail());
         if(account.isDeleted() == true){
             throw new BadRequestException("Please try another account!");
         }
@@ -98,6 +96,7 @@ public class AuthenticationService implements UserDetailsService {
         accountResponse.setRole(account.getRole());
         accountResponse.setId(account.getId());
         accountResponse.setPhone((account.getPhone()));
+        accountResponse.setWallet((account.getWallet()));
         return accountResponse;
     }
 
@@ -123,13 +122,21 @@ public class AuthenticationService implements UserDetailsService {
                 //email
                 account.setEmail(firebaseToken.getEmail());
                 account.setRole(RoleEnum.STUDENT);
-                account = authenticationRepository.save(account);
+
+                Wallet wallet = new Wallet();
+                wallet.setMoney(0);
+                account.setWallet(wallet);
+                authenticationRepository.save(account); //save to db
+                wallet.setAccount(account);
+                walletRepository.save(wallet);
+
             }else{
                 if(account.isDeleted() == true){
                     throw new BadRequestException("Please try another account!");
                 }
             }
 
+            if(accountResponse.getPhone() != null) accountResponse.setPhone((account.getPhone()));
             accountResponse.setId(account.getId());
             //fullname
             accountResponse.setFullname(account.getFullname());
@@ -138,6 +145,7 @@ public class AuthenticationService implements UserDetailsService {
             accountResponse.setEmail(account.getEmail());
             String token = tokenService.generateToken(account);
             accountResponse.setToken(token);
+            accountResponse.setWallet((account.getWallet()));
 
         }catch(Exception e){
             System.out.println(e);
@@ -175,7 +183,8 @@ public class AuthenticationService implements UserDetailsService {
 
     public Account getCurrentAccount() {
         Account accountFilter = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return authenticationRepository.findAccountById(accountFilter.getId());
+//        return authenticationRepository.findAccountById(accountFilter.getId());
+        return accountFilter;
     }
 
     public void ResetPassword(ResetPasswordRequest resetPasswordRequest) {

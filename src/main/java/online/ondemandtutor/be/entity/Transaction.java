@@ -6,11 +6,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import online.ondemandtutor.be.enums.TransactionEnum;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-
-import java.util.UUID;
-
 @Entity
 @Getter
 @Setter
@@ -28,14 +23,9 @@ public class Transaction {
 
     private String transactionDate;
 
-    String accountNumber;
-    String accountName;
-    String bankName;
-
     @ManyToOne
     @JoinColumn(name = "from_id")
     Wallet from;
-
 
     @ManyToOne
     @JoinColumn(name = "to_id")

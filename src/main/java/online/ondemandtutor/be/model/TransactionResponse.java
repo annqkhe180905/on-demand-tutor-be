@@ -13,8 +13,8 @@ public class TransactionResponse {
 
     private Long transactionID;
 
-    @Enumerated(EnumType.STRING)
-    TransactionEnum transactionType;
+//    @Enumerated(EnumType.STRING)
+//    TransactionEnum transactionType;
 
     private double amount;
 
