@@ -32,25 +32,25 @@ public class BookingAPI {
     }
 
     @PostMapping("/approved-booking")
-//    @PreAuthorize("hasAuthority('TUTOR')")
+    @PreAuthorize("hasAuthority('TUTOR')")
     public void approvedBooking(@RequestBody BookingRequestById id){
         bookingService.approveBookingRequest(id);
     }
 
     @PostMapping("/rejected-booking")
-//    @PreAuthorize("hasAuthority('TUTOR')")
+    @PreAuthorize("hasAuthority('TUTOR')")
     public void rejectedBooking(@RequestBody BookingRequestById id){
         bookingService.rejectBookingRequest(id);
     }
 
     @PostMapping("/passed-course")
-//    @PreAuthorize("hasAuthority('TUTOR')")
+    @PreAuthorize("hasAuthority('TUTOR')")
     public void passedCourse(@RequestBody BookingRequestById id){
         bookingService.passedCourse(id);
     }
 
     @PostMapping("/failed-course")
-//    @PreAuthorize("hasAuthority('TUTOR')")
+    @PreAuthorize("hasAuthority('TUTOR')")
     public void failedCourse(@RequestBody BookingRequestById id){
         bookingService.failedCourse(id);
     }

@@ -6,6 +6,7 @@ import online.ondemandtutor.be.entity.Wallet;
 import online.ondemandtutor.be.enums.TransactionEnum;
 import online.ondemandtutor.be.exception.BadRequestException;
 import online.ondemandtutor.be.model.CreateUrlResponse;
+import online.ondemandtutor.be.model.CreateWalletUrlResponse;
 import online.ondemandtutor.be.model.request.RechargeRequest;
 import online.ondemandtutor.be.model.UpdateMoneyResponse;
 import online.ondemandtutor.be.repository.TransactionRepository;
@@ -60,7 +61,7 @@ public class WalletService {
         String vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 
 //        String returnUrl = "http://ondemandtutor.online/user-profile/wallet?id="+transactionReturn.getId();
-        String returnUrl = "http://ondemandtutor.online/payments";
+        String returnUrl = "http://ondemandtutor.online/payments?accountId=" + account.getId();
 
         String currCode = "VND";
         Map<String, String> vnpParams = new TreeMap<>();
@@ -104,20 +105,17 @@ public class WalletService {
         return urlBuilder.toString();
     }
 
-//    public CreateUrlResponse createUrl(RechargeRequest rechargeRequestDTO) throws NoSuchAlgorithmException, InvalidKeyException, Exception{
+//    public CreateWalletUrlResponse createUrl(RechargeRequest rechargeRequestDTO) throws NoSuchAlgorithmException, InvalidKeyException, Exception {
 //        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 //        LocalDateTime createDate = LocalDateTime.now();
 //        String formattedCreateDate = createDate.format(formatter);
-//        String orderId = UUID.randomUUID().toString().substring(0,9);
+//        String orderId = UUID.randomUUID().toString().substring(0, 9);
 //
 //        Account account = authenticationService.getCurrentAccount();
-//
 //        Wallet wallet = walletRepository.findWalletByAccountId(account.getId());
 //
 //        Transaction transaction = new Transaction();
-//
 //        transaction.setAmount(Double.parseDouble(rechargeRequestDTO.getAmount()));
-//        transaction.setTransactionType(TransactionEnum.PENDING);
 //        transaction.setTo(wallet);
 //        transaction.setTransactionDate(formattedCreateDate);
 //        transaction.setDescription("Recharge");
@@ -126,11 +124,9 @@ public class WalletService {
 //        String tmnCode = "I7C7L45T";
 //        String secretKey = "C4SEJ9L30U3YRBJJSCRNIQYN1WB1A2WM";
 //        String vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-//
-////        String returnUrl = "http://ondemandtutor.online/user-profile/wallet?id="+transactionReturn.getId();
 //        String returnUrl = "http://ondemandtutor.online/payments";
-//
 //        String currCode = "VND";
+//
 //        Map<String, String> vnpParams = new TreeMap<>();
 //        vnpParams.put("vnp_Version", "2.1.0");
 //        vnpParams.put("vnp_Command", "pay");
@@ -169,10 +165,8 @@ public class WalletService {
 //        }
 //        urlBuilder.deleteCharAt(urlBuilder.length() - 1); // Remove last '&'
 //
-//        CreateUrlResponse response = new CreateUrlResponse();
-//        response.setUrl(urlBuilder.toString());
-//        response.setTransactionId(transactionReturn.getId());
-//        return response;
+//        String url = urlBuilder.toString();
+//        return new CreateWalletUrlResponse(url, account.getId());
 //    }
 
 
@@ -188,50 +182,6 @@ public class WalletService {
         }
         return result.toString();
     }
-
-//    public Wallet recharge(Long id) {
-//        Account account = authenticationService.getCurrentAccount();
-//        Transaction transaction = transactionRepository.findTransactionById(id);
-//        Wallet wallet = walletRepository.findWalletByAccountId(account.getId());
-//        if(transaction.getTransactionType().equals(TransactionEnum.PENDING)) {
-//            if(wallet.getId() == transaction.getTo().getId()){
-//                wallet.setMoney(wallet.getMoney() + transaction.getAmount());
-//            }
-//        }
-//        else{
-//            throw new RuntimeException("Reload");
-//        }
-//        transaction.setTransactionType(TransactionEnum.RECHARGE);
-//
-//        transactionRepository.save(transaction);
-//        return walletRepository.save(wallet);
-//    }
-
-//    public Wallet recharge(Transaction transaction) {
-//        Account account = authenticationService.getCurrentAccount();
-//        Wallet wallet = walletRepository.findWalletByAccountId(account.getId());
-//        if (transaction.getTransactionType().equals(TransactionEnum.PENDING)) {
-//            if (wallet.getId() == transaction.getTo().getId()) {
-//                wallet.setMoney(wallet.getMoney() + transaction.getAmount());
-//                transaction.setTransactionType(TransactionEnum.RECHARGE);
-//                transactionRepository.save(transaction);
-//                return walletRepository.save(wallet);
-//            }
-//        } else {
-//            throw new RuntimeException("Transaction is not pending.");
-//        }
-//        return wallet;
-//    }
-
-//    public boolean checkTransactionStatus(Long transactionId) {
-//        Transaction transaction = transactionRepository.findTransactionById(transactionId);
-//        if (transaction != null && transaction.getTransactionType() == TransactionEnum.PENDING) {
-//            // Giả sử giao dịch thành công
-//            recharge(transaction);
-//            return true;
-//        }
-//        return false;
-//    }
 
     public Wallet updateMoney(UpdateMoneyResponse response){
         Account account = authenticationService.getCurrentAccount();
