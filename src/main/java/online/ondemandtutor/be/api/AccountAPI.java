@@ -25,19 +25,19 @@ public class AccountAPI {
     }
 
     @PostMapping("/approved-up-role")
-    @PreAuthorize("hasAnyAuthority('MODERATOR', 'ADMIN')")
+    @PreAuthorize("hasAuthority('MODERATOR')")
     public void approvedUpRole(@RequestBody UpRoleRequestByAccountId id){
         accountService.ApprovedUpRole(id);
     }
 
     @PostMapping("/rejected-up-role")
-    @PreAuthorize("hasAnyAuthority('MODERATOR', 'ADMIN')")
+    @PreAuthorize("hasAuthority('MODERATOR')")
     public void rejectedUpRole(@RequestBody UpRoleRequestByAccountId id){
         accountService.RejectedUpRole(id);
     }
 
     @GetMapping("/pending-accounts")
-    @PreAuthorize("hasAnyAuthority('MODERATOR', 'ADMIN')")
+    @PreAuthorize("hasAuthority('MODERATOR')")
     public ResponseEntity<List<Account>> getPendingAccount (){
         List<Account> printAll = accountService.getAllAccountsHaveUpRoleRequest();
         return ResponseEntity.ok(printAll);

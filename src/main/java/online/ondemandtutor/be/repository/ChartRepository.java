@@ -23,4 +23,6 @@ public interface ChartRepository extends JpaRepository<Account, Long> {
 
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.description = 'Recharge'")
     BigDecimal findTotalRechargedMoney();
+
+    long count();
 }

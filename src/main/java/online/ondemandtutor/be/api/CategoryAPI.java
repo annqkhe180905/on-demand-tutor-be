@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api")
 @SecurityRequirement(name = "api")
-@PreAuthorize("hasAnyAuthority('MODERATOR', 'ADMIN')")
+@PreAuthorize("hasAuthority('MODERATOR')")
 
 public class    CategoryAPI {
     @Autowired

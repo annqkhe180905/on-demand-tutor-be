@@ -8,7 +8,6 @@ import online.ondemandtutor.be.repository.ComplaintRepository;
 import online.ondemandtutor.be.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("api")
 @SecurityRequirement(name = "api")
-@PreAuthorize("hasAnyAuthority('MODERATOR', 'ADMIN')")
 public class ComplaintAPI {
     @Autowired
     ComplaintService complaintService;

@@ -35,6 +35,12 @@ public class WalletAPI {
 
     }
 
+//    @PutMapping("/recharge/{id}")
+//    public ResponseEntity recharge(@PathVariable Long id) throws Exception {
+//        Wallet wallet = walletService.recharge(id);
+//        return  ResponseEntity.ok(wallet);
+//    }
+
     @GetMapping("/walletDetail/{id}")
     public ResponseEntity walletDetail(@PathVariable Long id) throws Exception {
         Wallet wallet = walletService.walletDetail(id);
@@ -47,4 +53,20 @@ public class WalletAPI {
         Wallet wallet1 = walletService.updateMoney(response);
         return ResponseEntity.ok(wallet1);
     }
+
+//    @Autowired
+//    private WalletService walletService;
+//
+//    @PostMapping("/createUrl")
+//    public ResponseEntity createUrl(@RequestBody RechargeRequest rechargeRequest) throws Exception {
+//        CreateUrlResponse response = walletService.createUrl(rechargeRequest);
+//        return ResponseEntity.ok(response);
+//    }
+//
+//    @GetMapping("/checkTransactionStatus/{transactionId}")
+//    public ResponseEntity checkTransactionStatus(@PathVariable Long transactionId) {
+//        boolean status = walletService.checkTransactionStatus(transactionId);
+//        return ResponseEntity.ok(status);
+//    }
+
 }

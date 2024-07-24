@@ -29,7 +29,7 @@ public class Complaint {
 
     @ManyToOne
     @JoinColumn(name = "from_student_id")
-            @JsonIgnore
+    @JsonIgnore
     Account fromStudent;
 
     private String tutorEmail;

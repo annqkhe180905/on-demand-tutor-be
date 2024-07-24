@@ -29,4 +29,8 @@ public class ChartService {
     public BigDecimal getTotalRechargedMoney() {
         return chartRepository.findTotalRechargedMoney();
     }
+
+    public long getTotalNumberOfAccounts() {
+        return chartRepository.count();
+    }
 }

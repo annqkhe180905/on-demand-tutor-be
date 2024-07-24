@@ -162,11 +162,6 @@ public class SubjectService {
 
         account.setEducationLevel(eduLv);
 
-
-//        List<Location> locations = locationRepository.findAllById(request.getLocationIds());
-//        account.setLocations(locations);
-
-
         ArrayList<Location> locationList = new ArrayList<>();
         List<Account> accounts = new ArrayList<>();
         for(Long findId : request.getLocationIds()){
@@ -210,118 +205,6 @@ public class SubjectService {
         account.getTutorVideos().add(tutorVideo);
 
         account.setBrief(request.getBrief());
-//
-//        for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
-//            for (Long slotId : dayAndSlot.getTeachingSlotIds()){
-//                ScheduleRecord scheduleRecord =  scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(),slotId);
-//                List<Account> lists = new ArrayList<>();
-//                if(scheduleRecord != null) {
-//                    scheduleRecord = new ScheduleRecord();
-//                    WeekDay weekDay = weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
-//                    TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
-//                    scheduleRecord.setWeekDay(weekDay);
-//                    scheduleRecord.setTeachingSlot(teachingSlot);
-//                    lists.add(account);
-//                    scheduleRecord.setAccount(lists);
-//                    scheduleRecord.getAccount().add((Account) lists);
-//                    // bi vòng lặp
-//                    scheduleRecordRepository.save(scheduleRecord);
-//                }else{
-////                    scheduleRecord.getAccount().add((Account) lists);
-//                    lists = scheduleRecord.getAccount();
-//                    scheduleRecord.setAccount(scheduleRecord.getAccount());
-//                    // bi vòng lặp
-//                    scheduleRecordRepository.save(scheduleRecord);
-//                }
-//            }
-//
-//        }
-
-//        for (DayAndSlotRequest dayAndSlot : request.getDayAndSlotRequests()) {
-//            for (Long slotId : dayAndSlot.getTeachingSlotIds()) {
-//                ScheduleRecord existingScheduleRecord = scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(), slotId);
-//                if (existingScheduleRecord != null) {
-//                    ScheduleRecord newScheduleRecord = new ScheduleRecord();
-//                    newScheduleRecord.setWeekDay(existingScheduleRecord.getWeekDay());
-//                    newScheduleRecord.setTeachingSlot(existingScheduleRecord.getTeachingSlot());
-//                    accounts = new ArrayList<>();
-//                    accounts.add(account);
-//                    newScheduleRecord.setAccount(accounts);
-//                    account.getScheduleRecords().add(newScheduleRecord);
-//                    scheduleRecordRepository.save(newScheduleRecord);
-//                }
-//            }
-//        }
-
-
-//        for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
-//            for (Long slotId : dayAndSlot.getTeachingSlotIds()){
-//                ScheduleRecord scheduleRecord =  scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(),slotId);
-//                List<Account> lists = new ArrayList<>();
-//                if(scheduleRecord == null){
-//                    scheduleRecord = new ScheduleRecord();
-//                    WeekDay weekDay =  weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
-//                    TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
-//                    scheduleRecord.setWeekDay(weekDay);
-//                    scheduleRecord.setTeachingSlot(teachingSlot);
-//                    lists.add(account);
-//                    scheduleRecord.setAccount(lists);
-//                    // bi vòng lặp
-//                    scheduleRecordRepository.save(scheduleRecord);
-//                }else{
-////                    lists = scheduleRecord.getAccount();
-////                    scheduleRecord.setAccount(lists);
-//                    WeekDay weekDay =  weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
-//                    TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
-//                    scheduleRecord.setWeekDay(weekDay);
-//                    scheduleRecord.setTeachingSlot(teachingSlot);
-//                    lists.add(account);
-//                    scheduleRecord.setAccount(lists);
-//                    // bi vòng lặp
-//                    scheduleRecordRepository.save(scheduleRecord);
-//                }
-//            }
-//        }
-        // Revised schedule function within subjectRegister method
-//        for (DayAndSlotRequest dayAndSlot : request.getDayAndSlotRequests()) {
-//            for (Long slotId : dayAndSlot.getTeachingSlotIds()) {
-//                WeekDay weekDay = weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
-//                TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
-//                // Check if a ScheduleRecord already exists to avoid duplicates
-//                ScheduleRecord scheduleRecord = scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(weekDay.getId(), teachingSlot.getId());
-//                if (scheduleRecord == null) {
-//                    scheduleRecord = new ScheduleRecord();
-//                    scheduleRecord.setWeekDay(weekDay);
-//                    scheduleRecord.setTeachingSlot(teachingSlot);
-//                    scheduleRecord.setAccount(new ArrayList<>()); // Initialize the list
-//                }
-//                // Add the account to the schedule record if not already present
-//                if (!scheduleRecord.getAccount().contains(account)) {
-//                    scheduleRecord.setWeekDay(weekDay);
-//                    scheduleRecord.setTeachingSlot(teachingSlot);
-//                    scheduleRecord.setAccount(new ArrayList<>());
-//                }
-//                // Save the schedule record outside the inner loop to reduce database calls
-//            }
-//        }
-
-//        for(DayAndSlotRequest dayAndSlot : request.getDayAndSlotRequests()){
-//            WeekDay weekDay = weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
-//            for(Long slotId : dayAndSlot.getTeachingSlotIds()){
-//                List<Account> lists = new ArrayList<>();
-//                TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
-//                ScheduleRecord scheduleRecord = scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(weekDay.getId(), teachingSlot.getId());
-//
-//                    scheduleRecord = new ScheduleRecord();
-//                    scheduleRecord.setWeekDay(weekDay);
-//                    scheduleRecord.setTeachingSlot(teachingSlot);
-//                    lists.add(account);
-//                    scheduleRecord.setAccount(lists);
-//                    scheduleRecord.getAccount().add(account);
-//                    scheduleRecordRepository.save(scheduleRecord);
-//
-//            }
-//        }
 
         for (DayAndSlotRequest dayAndSlot : request.getDayAndSlotRequests()) {
             WeekDay weekDay = weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
@@ -444,124 +327,124 @@ public class SubjectService {
         return authenticationRepository.findAccountsBySubjectRegistrationStatus(RequestStatus.APPROVED);
     }
 
-public Account updateSubjectRegister(SubjectRegisterRequest request) {
-    // Fetch the existing Account entity
-    Account account = authenticationRepository.findAccountById(request.getAccountId());
-    if(account != null){
-        if (account.getSubjectRegistrationStatus() == RequestStatus.PENDING) {
-            throw new BadRequestException("Your registration is already in pending status!");
-        }
-    }
-
-    // Remove existing associations for Subjects
-    for (Subject subject : account.getSubjects()) {
-        subject.getAccount().remove(account);
-        subjectRepository.save(subject);
-    }
-    account.getSubjects().clear();
-
-    // Remove existing associations for Locations
-    for (Location location : account.getLocations()) {
-        location.getAccount().remove(account);
-        locationRepository.save(location);
-    }
-    account.getLocations().clear();
-
-    // Remove existing associations for Grades
-    for (Grade grade : account.getGrades()) {
-        grade.getAccount().remove(account);
-        gradeRepository.save(grade);
-    }
-    account.getGrades().clear();
-
-    // Remove existing ScheduleRecords
-    List<ScheduleRecord> existingScheduleRecords = scheduleRecordRepository.findAllByAccount(account);
-    for (ScheduleRecord scheduleRecord : existingScheduleRecords) {
-        scheduleRecord.getAccount().remove(account);
-        scheduleRecordRepository.save(scheduleRecord);
-    }
-    scheduleRecordRepository.deleteAll(existingScheduleRecords);  // Delete the records
-
-    // Save to update the database
-    authenticationRepository.save(account);
-
-    // Update the EducationLevel of the account
-    EducationLevel eduLv = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
-    account.setEducationLevel(eduLv);
-    authenticationRepository.save(account);
-
-    ArrayList<Location> locationList = new ArrayList<>();
-    List<Account> accounts = new ArrayList<>();
-    for(Long findId : request.getLocationIds()){
-        Location location = locationRepository.findLocationById(findId);
-        locationList.add(location);
-        accounts = location.getAccount();
-        accounts.add(account);
-        location.setAccount(accounts);
-    }
-    account.setLocations(locationList);
-
-
-    ArrayList<Grade> gradeList = new ArrayList<>();
-//        List<Account> accounts = new ArrayList<>();
-    for(Long findId : request.getGradeIds()){
-        Grade grade = gradeRepository.findGradeById(findId);
-        gradeList.add(grade);
-        accounts = grade.getAccount();
-        accounts.add(account);
-        grade.setAccount(accounts);
-    }
-    account.setGrades(gradeList);
-
-
-
-
-    ArrayList<Subject> subjectList = new ArrayList<>();
-//        List<Account> accounts = new ArrayList<>();
-    for(Long findId : request.getGradeIds()){
-        Subject subject = subjectRepository.findSubjectById(findId);
-        subjectList.add(subject);
-        accounts = subject.getAccount();
-        accounts.add(account);
-        subject.setAccount(accounts);
-    }
-    account.setGrades(gradeList);
-
-
-
-    // Update the TutorVideo of the account
-    TutorVideo tutorVideo = tutorVideoRepository.findVideoUrlByAccount(account);
-    tutorVideo.setAccount(account);
-    tutorVideo.setUrl(request.getTutorVideoUrl());
-
-    account.setBrief(request.getBrief());
-
-    for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
-        for (Long slotId : dayAndSlot.getTeachingSlotIds()){
-            ScheduleRecord scheduleRecord =  scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(),slotId);
-            List<Account> lists = new ArrayList<>();
-            if(scheduleRecord == null){
-                scheduleRecord = new ScheduleRecord();
-                WeekDay weekDay =  weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
-                TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
-                scheduleRecord.setWeekDay(weekDay);
-                scheduleRecord.setTeachingSlot(teachingSlot);
-                lists.add(account);
-                scheduleRecord.setAccount(lists);
-                // bi vòng lặp
-                scheduleRecordRepository.save(scheduleRecord);
-            }else{
-                lists = scheduleRecord.getAccount();
-                scheduleRecord.setAccount(lists);
-                // bi vòng lặp
-                scheduleRecordRepository.save(scheduleRecord);
+    public Account updateSubjectRegister(SubjectRegisterRequest request) {
+        // Fetch the existing Account entity
+        Account account = authenticationRepository.findAccountById(request.getAccountId());
+        if(account != null){
+            if (account.getSubjectRegistrationStatus() == RequestStatus.PENDING) {
+                throw new BadRequestException("Your registration is already in pending status!");
             }
         }
+
+        // Remove existing associations for Subjects
+        for (Subject subject : account.getSubjects()) {
+            subject.getAccount().remove(account);
+            subjectRepository.save(subject);
+        }
+        account.getSubjects().clear();
+
+        // Remove existing associations for Locations
+        for (Location location : account.getLocations()) {
+            location.getAccount().remove(account);
+            locationRepository.save(location);
+        }
+        account.getLocations().clear();
+
+        // Remove existing associations for Grades
+        for (Grade grade : account.getGrades()) {
+            grade.getAccount().remove(account);
+            gradeRepository.save(grade);
+        }
+        account.getGrades().clear();
+
+        // Remove existing ScheduleRecords
+        List<ScheduleRecord> existingScheduleRecords = scheduleRecordRepository.findAllByAccount(account);
+        for (ScheduleRecord scheduleRecord : existingScheduleRecords) {
+            scheduleRecord.getAccount().remove(account);
+            scheduleRecordRepository.save(scheduleRecord);
+        }
+        scheduleRecordRepository.deleteAll(existingScheduleRecords);  // Delete the records
+
+        // Save to update the database
+        authenticationRepository.save(account);
+
+        // Update the EducationLevel of the account
+        EducationLevel eduLv = educationLevelRepository.findEducationLevelById(request.getEducationLevelId());
+        account.setEducationLevel(eduLv);
+        authenticationRepository.save(account);
+
+        ArrayList<Location> locationList = new ArrayList<>();
+        List<Account> accounts = new ArrayList<>();
+        for(Long findId : request.getLocationIds()){
+            Location location = locationRepository.findLocationById(findId);
+            locationList.add(location);
+            accounts = location.getAccount();
+            accounts.add(account);
+            location.setAccount(accounts);
+        }
+        account.setLocations(locationList);
+
+
+        ArrayList<Grade> gradeList = new ArrayList<>();
+//        List<Account> accounts = new ArrayList<>();
+        for(Long findId : request.getGradeIds()){
+            Grade grade = gradeRepository.findGradeById(findId);
+            gradeList.add(grade);
+            accounts = grade.getAccount();
+            accounts.add(account);
+            grade.setAccount(accounts);
+        }
+        account.setGrades(gradeList);
+
+
+
+
+        ArrayList<Subject> subjectList = new ArrayList<>();
+//        List<Account> accounts = new ArrayList<>();
+        for(Long findId : request.getGradeIds()){
+            Subject subject = subjectRepository.findSubjectById(findId);
+            subjectList.add(subject);
+            accounts = subject.getAccount();
+            accounts.add(account);
+            subject.setAccount(accounts);
+        }
+        account.setGrades(gradeList);
+
+
+
+        // Update the TutorVideo of the account
+        TutorVideo tutorVideo = tutorVideoRepository.findVideoUrlByAccount(account);
+        tutorVideo.setAccount(account);
+        tutorVideo.setUrl(request.getTutorVideoUrl());
+
+        account.setBrief(request.getBrief());
+
+        for (DayAndSlotRequest dayAndSlot: request.getDayAndSlotRequests()){
+            for (Long slotId : dayAndSlot.getTeachingSlotIds()){
+                ScheduleRecord scheduleRecord =  scheduleRecordRepository.findByWeekDayIdAndTeachingSlotId(dayAndSlot.getWeekDayIds(),slotId);
+                List<Account> lists = new ArrayList<>();
+                if(scheduleRecord == null){
+                    scheduleRecord = new ScheduleRecord();
+                    WeekDay weekDay =  weekDayRepository.findWeekDayById(dayAndSlot.getWeekDayIds());
+                    TeachingSlot teachingSlot = teachingSlotRepository.findTeachingSlotById(slotId);
+                    scheduleRecord.setWeekDay(weekDay);
+                    scheduleRecord.setTeachingSlot(teachingSlot);
+                    lists.add(account);
+                    scheduleRecord.setAccount(lists);
+                    // bi vòng lặp
+                    scheduleRecordRepository.save(scheduleRecord);
+                }else{
+                    lists = scheduleRecord.getAccount();
+                    scheduleRecord.setAccount(lists);
+                    // bi vòng lặp
+                    scheduleRecordRepository.save(scheduleRecord);
+                }
+            }
+        }
+        tutorVideoRepository.save(tutorVideo);
+        Account newRegister = authenticationRepository.save(account);
+        pendingAccount(newRegister);
+        SendSubjectRegistrationToModerator(newRegister);
+        return newRegister;
     }
-    tutorVideoRepository.save(tutorVideo);
-    Account newRegister = authenticationRepository.save(account);
-    pendingAccount(newRegister);
-    SendSubjectRegistrationToModerator(newRegister);
-    return newRegister;
-}
 }
